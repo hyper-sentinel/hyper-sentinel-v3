@@ -5,7 +5,7 @@ description = "Next-generation autonomous fintech AI agent swarm"
 requires-python = ">=3.12"
 dependencies = [
     # Core agent frameworks
-    "upsonic>=0.50.0",
+    "upsonic[safety]>=0.50.0",
     "agno>=1.0.0",
     # LLM providers
     "anthropic>=0.40.0",

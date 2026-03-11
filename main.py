@@ -26,8 +26,9 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("httpcore").setLevel(logging.WARNING)
 logging.getLogger("upsonic").setLevel(logging.WARNING)
 logging.getLogger("upsonic.sentry.pipeline").setLevel(logging.WARNING)
-logging.getLogger("agent").setLevel(logging.WARNING)
+logging.getLogger("agent").setLevel(logging.ERROR)
 logging.getLogger("uvicorn").setLevel(logging.WARNING)
+logging.getLogger("asyncio").setLevel(logging.WARNING)
 
 from rich.console import Console
 from rich.panel import Panel
@@ -627,6 +628,18 @@ sentinel_instance = None
 sentinel_thread = None
 
 
+def _md_to_rich(text: str) -> str:
+    """Convert markdown formatting to Rich markup for clean terminal output."""
+    import re
+    # Convert **bold** to [bold]...[/bold]
+    text = re.sub(r'\*\*(.+?)\*\*', r'[bold]\1[/bold]', text)
+    # Convert ## headers to bold cyan
+    text = re.sub(r'^## (.+)$', r'[bold cyan]\1[/bold cyan]', text, flags=re.MULTILINE)
+    # Convert # headers to bold
+    text = re.sub(r'^# (.+)$', r'[bold white]\1[/bold white]', text, flags=re.MULTILINE)
+    return text
+
+
 def _chat_solo(user_input: str):
     """Send a question to the MarketAgent (solo mode)."""
     from agent import analyze_market_chat
@@ -635,7 +648,14 @@ def _chat_solo(user_input: str):
     with console.status("[cyan]MarketAgent thinking...[/]"):
         try:
             response = analyze_market_chat(user_input)
-            console.print(f"  [bold cyan]🛡️  Sentinel →[/] {response}\n")
+            rich_response = _md_to_rich(str(response))
+            console.print(Panel(
+                rich_response,
+                title="[bold cyan]🛡️ Sentinel[/]",
+                border_style="cyan",
+                padding=(1, 2),
+            ))
+            console.print()
         except Exception as e:
             console.print(f"  [red]Error: {e}[/]\n")
 
