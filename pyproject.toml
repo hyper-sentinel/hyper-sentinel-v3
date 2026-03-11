@@ -44,6 +44,10 @@ dependencies = [
     "python-telegram-bot>=21.0",
     # Technical analysis
     "pandas-ta>=0.3.14b",
+    # Browser automation (Tier 2)
+    "browser-use>=0.1.0",
+    "langchain-anthropic>=0.3.0",
+    "langchain-openai>=0.3.0",
 ]
 
 [tool.pyright]

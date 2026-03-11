@@ -433,8 +433,8 @@ def _print_help(mode="solo"):
     cmds.add_row("mission add <desc>", "Create a new mission (e.g. 'alert if BTC < 80K')")
     cmds.add_row("", "")
     cmds.add_row("[bold green]── Browser ──[/]", "")
-    cmds.add_row("open <site>", "Open site in Chrome (youtube, tradingview, etc.)")
-    cmds.add_row("browse <url>", "Open any URL in Chrome")
+    cmds.add_row("open <site>", "Instant Chrome open (youtube, tradingview, etc.)")
+    cmds.add_row("browse <task>", "LLM + Playwright browser automation (complex tasks)")
     cmds.add_row("", "")
     cmds.add_row("[bold green]── Configure ──[/]", "")
     cmds.add_row("add", "Show available data source integrations")
@@ -916,14 +916,37 @@ def main():
             console.print()
             continue
 
-        # ── Browser commands: open X, browse X, go to X ──
-        if cmd.startswith(("open ", "browse ", "go to ", "launch ", "navigate to ")):
+        # ── Browser commands: Tier 1 (open X) vs Tier 2 (browse <task>) ──
+        # Tier 1: "open youtube", "go to tradingview" → instant Chrome open
+        if cmd.startswith(("open ", "go to ", "launch ", "navigate to ")):
             from browser_agent import is_browser_command, open_in_browser
             if is_browser_command(user_input):
                 console.print(f"\n  [cyan]🌐 Opening in Chrome...[/]")
                 result = open_in_browser(user_input)
                 console.print(f"  {result}\n")
                 continue
+
+        # Tier 2: "browse <complex task>" → LLM-driven browser automation
+        if cmd.startswith("browse "):
+            task = user_input[7:].strip()
+            if not task:
+                console.print("  [yellow]Usage: browse <task>[/]")
+                console.print("  [dim]Examples:[/]")
+                console.print("    [cyan]browse check BTC price on tradingview[/]")
+                console.print("    [cyan]browse find trending tokens on coingecko[/]")
+                console.print("    [cyan]browse screenshot dexscreener.com/solana[/]\n")
+                continue
+            console.print(f"\n  [cyan]🤖 Browser agent working on: {task}[/]")
+            console.print(f"  [dim]Using Tier 2 (LLM + Playwright) — this may take a moment...[/]")
+            try:
+                from browser_agent import get_browser_agent
+                agent = get_browser_agent(prefer_computer_use=False)
+                result = agent.browse_sync(task)
+                console.print(f"\n  [bold cyan]🌐 Browser →[/] {result}\n")
+            except Exception as e:
+                console.print(f"\n  [red]Browser error: {e}[/]")
+                console.print(f"  [dim]Make sure browser-use is installed: uv add browser-use langchain-anthropic[/]\n")
+            continue
 
         # ── Add commands: add <service> → interactive API key setup ──
         if cmd.startswith("add"):
