@@ -62,6 +62,18 @@ def get_y2_sentiment(ticker: str = "BTC") -> dict:
     from scrapers.y2_scraper import get_news_sentiment as _fn
     return _fn(ticker)
 
+@tool
+def get_y2_reports() -> list:
+    """Get latest Y2 Intelligence reports."""
+    from scrapers.y2_scraper import get_intelligence_reports as _fn
+    return _fn()
+
+@tool
+def get_y2_report_detail(report_id: str) -> dict:
+    """Get full details of a Y2 Intelligence report by ID."""
+    from scrapers.y2_scraper import get_report_detail as _fn
+    return _fn(report_id)
+
 
 # ── Elfa AI (requires ELFA_API_KEY) ──────────────────────────────────
 
@@ -75,6 +87,24 @@ def get_trending_tokens() -> list:
 def get_social_mentions(query: str) -> dict:
     """Get social media mentions for a search query from Elfa AI."""
     from scrapers.elfa_scraper import get_top_mentions as _fn
+    return _fn(query)
+
+@tool
+def get_trending_narratives() -> list:
+    """Get trending crypto narratives from Elfa AI."""
+    from scrapers.elfa_scraper import get_trending_narratives as _fn
+    return _fn()
+
+@tool
+def get_token_news(token: str) -> list:
+    """Get news for a specific token from Elfa AI."""
+    from scrapers.elfa_scraper import get_token_news as _fn
+    return _fn(token)
+
+@tool
+def search_social_mentions(query: str) -> list:
+    """Search social media mentions by keyword from Elfa AI."""
+    from scrapers.elfa_scraper import search_mentions as _fn
     return _fn(query)
 
 
@@ -114,6 +144,36 @@ def get_hl_orderbook(symbol: str) -> dict:
     from scrapers.hyperliquid_scraper import get_hl_orderbook as _fn
     return _fn(symbol)
 
+@tool
+def get_hl_config() -> dict:
+    """Get Hyperliquid connection config: wallet address, trading status."""
+    from scrapers.hyperliquid_scraper import get_hl_config as _fn
+    return _fn()
+
+@tool
+def get_hl_open_orders() -> list:
+    """Get all open/pending Hyperliquid orders."""
+    from scrapers.hyperliquid_scraper import get_hl_open_orders as _fn
+    return _fn()
+
+@tool
+def place_hl_order(coin: str, side: str, size: float, price: float = 0, order_type: str = "market") -> dict:
+    """Place a Hyperliquid perp order. side='buy'|'sell', order_type='market'|'limit'. ⚠️ REAL TRADING."""
+    from scrapers.hyperliquid_scraper import place_hl_order as _fn
+    return _fn(coin=coin, side=side, size=size, price=price, order_type=order_type)
+
+@tool
+def cancel_hl_order(coin: str, oid: str) -> dict:
+    """Cancel a Hyperliquid order by coin and order ID."""
+    from scrapers.hyperliquid_scraper import cancel_hl_order as _fn
+    return _fn(coin=coin, oid=oid)
+
+@tool
+def close_hl_position(coin: str) -> dict:
+    """Close an entire Hyperliquid position at market price. ⚠️ REAL TRADING."""
+    from scrapers.hyperliquid_scraper import close_hl_position as _fn
+    return _fn(coin=coin)
+
 
 # ── Aster DEX (requires ASTER keys) ─────────────────────────────────
 
@@ -135,6 +195,42 @@ def get_aster_balance() -> dict:
     from scrapers.aster_scraper import aster_balance as _fn
     return _fn()
 
+@tool
+def get_aster_orderbook(symbol: str = "BTCUSDT", limit: int = 10) -> dict:
+    """Get Aster DEX order book for a futures symbol."""
+    from scrapers.aster_scraper import aster_orderbook as _fn
+    return _fn(symbol, limit)
+
+@tool
+def get_aster_klines(symbol: str = "BTCUSDT", interval: str = "1h", limit: int = 50) -> list:
+    """Get Aster DEX candlestick data. Intervals: 1m, 5m, 15m, 1h, 4h, 1d."""
+    from scrapers.aster_scraper import aster_klines as _fn
+    return _fn(symbol, interval, limit)
+
+@tool
+def get_aster_funding_rate(symbol: str = "BTCUSDT") -> dict:
+    """Get current Aster DEX funding rate for a symbol."""
+    from scrapers.aster_scraper import aster_funding_rate as _fn
+    return _fn(symbol)
+
+@tool
+def place_aster_order(symbol: str, side: str, quantity: float, order_type: str = "MARKET", price: float = 0) -> dict:
+    """Place an Aster DEX futures order. side='BUY'|'SELL'. ⚠️ REAL TRADING."""
+    from scrapers.aster_scraper import aster_place_order as _fn
+    return _fn(symbol=symbol, side=side, quantity=quantity, order_type=order_type, price=price)
+
+@tool
+def cancel_aster_order(symbol: str, order_id: str) -> dict:
+    """Cancel an Aster DEX order."""
+    from scrapers.aster_scraper import aster_cancel_order as _fn
+    return _fn(symbol=symbol, order_id=order_id)
+
+@tool
+def set_aster_leverage(symbol: str, leverage: int) -> dict:
+    """Set leverage for an Aster DEX symbol."""
+    from scrapers.aster_scraper import aster_set_leverage as _fn
+    return _fn(symbol=symbol, leverage=leverage)
+
 
 # ── Polymarket (requires PM keys) ────────────────────────────────────
 
@@ -150,6 +246,42 @@ def get_polymarket_positions() -> list:
     from scrapers.polymarket_scraper import get_polymarket_positions as _fn
     return _fn()
 
+@tool
+def get_polymarket_markets() -> list:
+    """Get active Polymarket prediction markets."""
+    from scrapers.polymarket_scraper import get_polymarket_markets as _fn
+    return _fn()
+
+@tool
+def get_polymarket_price(token_id: str) -> dict:
+    """Get current price for a Polymarket token."""
+    from scrapers.polymarket_scraper import get_polymarket_price as _fn
+    return _fn(token_id)
+
+@tool
+def get_polymarket_orderbook(token_id: str) -> dict:
+    """Get Polymarket order book for a token."""
+    from scrapers.polymarket_scraper import get_polymarket_orderbook as _fn
+    return _fn(token_id)
+
+@tool
+def buy_polymarket(token_id: str, amount: float, price: float) -> dict:
+    """Buy shares on Polymarket. ⚠️ REAL TRADING."""
+    from scrapers.polymarket_scraper import buy_polymarket as _fn
+    return _fn(token_id=token_id, amount=amount, price=price)
+
+@tool
+def sell_polymarket(token_id: str, amount: float, price: float) -> dict:
+    """Sell shares on Polymarket. ⚠️ REAL TRADING."""
+    from scrapers.polymarket_scraper import sell_polymarket as _fn
+    return _fn(token_id=token_id, amount=amount, price=price)
+
+@tool
+def cancel_polymarket_order(order_id: str) -> dict:
+    """Cancel a Polymarket order by ID."""
+    from scrapers.polymarket_scraper import cancel_polymarket_order as _fn
+    return _fn(order_id=order_id)
+
 
 # ── Tool Groups ──────────────────────────────────────────────────────
 
@@ -157,12 +289,29 @@ CRYPTO_TOOLS = [get_crypto_price, get_crypto_top_n, search_crypto]
 
 MACRO_TOOLS = [get_economic_dashboard, get_fred_series]
 
-SENTIMENT_TOOLS = [get_y2_recap, get_y2_sentiment, get_trending_tokens, get_social_mentions, search_x]
-
-TRADING_TOOLS = [
-    get_hl_account, get_hl_positions, get_hl_orderbook,
-    get_aster_ticker, get_aster_positions, get_aster_balance,
-    search_polymarket, get_polymarket_positions,
+SENTIMENT_TOOLS = [
+    get_y2_recap, get_y2_sentiment, get_y2_reports, get_y2_report_detail,
+    get_trending_tokens, get_social_mentions, get_trending_narratives, get_token_news, search_social_mentions,
+    search_x,
 ]
+
+HL_TOOLS = [
+    get_hl_account, get_hl_positions, get_hl_orderbook, get_hl_config, get_hl_open_orders,
+    place_hl_order, cancel_hl_order, close_hl_position,
+]
+
+ASTER_TOOLS = [
+    get_aster_ticker, get_aster_positions, get_aster_balance,
+    get_aster_orderbook, get_aster_klines, get_aster_funding_rate,
+    place_aster_order, cancel_aster_order, set_aster_leverage,
+]
+
+PM_TOOLS = [
+    search_polymarket, get_polymarket_positions, get_polymarket_markets,
+    get_polymarket_price, get_polymarket_orderbook,
+    buy_polymarket, sell_polymarket, cancel_polymarket_order,
+]
+
+TRADING_TOOLS = HL_TOOLS + ASTER_TOOLS + PM_TOOLS
 
 ALL_TOOLS = CRYPTO_TOOLS + MACRO_TOOLS + SENTIMENT_TOOLS + TRADING_TOOLS
