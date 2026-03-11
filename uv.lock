@@ -1722,8 +1722,8 @@ wheels = [
 ]
 
 [[package]]
-name = "hyper-sentinel-v2"
-version = "0.2.0"
+name = "hyper-sentinel-v3"
+version = "0.3.0"
 source = { virtual = "." }
 dependencies = [
     { name = "agno" },

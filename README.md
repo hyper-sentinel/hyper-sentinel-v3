@@ -1,23 +1,61 @@
-# 🛡️ Hyper-Sentinel v3
+<h1 align="center">🛡️ Hyper-Sentinel v3</h1>
 
-**Autonomous AI Agent Swarm for Financial Surveillance, Trading & Market Intelligence — 6th Generation**
+<p align="center">
+<strong>Autonomous AI Agent Swarm for Financial Surveillance, Trading & Market Intelligence</strong>
+</p>
 
-> Multi-LLM (Claude, Gemini, Grok) · 3-tier browser automation · 57+ tools · NATS JetStream · 10+ data sources
+<p align="center">
+Crypto · Equities · Options · Prediction Markets · Macro · Sentiment · Browser Automation
+</p>
 
-6th Gen — forked from v2 with 3-tier browser automation (instant open → LLM+Playwright → computer use), multi-provider LLM support, and Docker-isolated shell execution. Same mission as [Sentinel v1](https://github.com/hyper-sentinel/agentic-hyper-sentinel): 24/7 autonomous operation with guardrails.
+<p align="center">
+<img src="https://img.shields.io/badge/PYTHON-3.13+-blue?style=for-the-badge&logo=python&logoColor=white" />
+<img src="https://img.shields.io/badge/AI-AUTONOMOUS-blueviolet?style=for-the-badge" />
+<img src="https://img.shields.io/badge/CLAUDE · GEMINI · GROK-LLM-green?style=for-the-badge" />
+<img src="https://img.shields.io/badge/TOOLS-57+-orange?style=for-the-badge" />
+<img src="https://img.shields.io/badge/LICENSE-PROPRIETARY-red?style=for-the-badge" />
+</p>
+
+<p align="center">
+<img src="https://img.shields.io/badge/data-CoinGecko-yellow" />
+<img src="https://img.shields.io/badge/data-Yahoo%20Finance-purple" />
+<img src="https://img.shields.io/badge/data-FRED-blue" />
+<img src="https://img.shields.io/badge/data-Polymarket-green" />
+<img src="https://img.shields.io/badge/data-Hyperliquid-cyan" />
+<img src="https://img.shields.io/badge/data-Aster%20DEX-orange" />
+<img src="https://img.shields.io/badge/data-Elfa%20AI-pink" />
+<img src="https://img.shields.io/badge/data-X%20%2F%20Twitter-black" />
+<img src="https://img.shields.io/badge/data-Y2%20Intel-red" />
+</p>
 
 ---
 
-## Generation Lineage
+## 📦 Overview
 
-| Gen | Project | Key Upgrade |
-|-----|---------|-------------|
-| 1st | `fintech-terminal` | Single agent, foundation |
-| 2nd | `agentic-fintech-terminal` | 5-agent swarm, 7 MCP servers |
-| 3rd | `agentic-hyper-terminal` | Dual-DEX, FRED macro, browser automation |
-| 4th | `agentic-hyper-sentinel` | Autonomous 24/7, monitors, missions, guardrails |
-| 5th | `hyper-sentinel-v2` | NATS pub/sub, Upsonic Teams, @tool scrapers, coordinate mode |
-| **6th** | **`hyper-sentinel-v3`** | **3-tier browser automation, multi-LLM, Docker shell isolation** |
+Hyper-Sentinel v3 is an **autonomous AI agent swarm** that conducts 24/7 financial surveillance, executes trades across multiple DEXs, and controls your computer through natural language — powered by your choice of LLM provider.
+
+> 📋 [**Full Capabilities Reference →**](CAPABILITIES.md) — detailed breakdown of all 57+ tools, agent modes, data sources, and architecture.
+
+**3 free data sources. No API keys required for market data.** You only need one LLM provider key.
+
+---
+
+## ⚡ Capabilities
+
+| Domain | Tools | Source |
+|--------|-------|--------|
+| **Crypto** | `get_crypto_price` · `get_crypto_top_n` · `search_crypto` | CoinGecko |
+| **Equities** | `get_stock_quote` · `get_stock_history` · `get_stock_info` | Yahoo Finance |
+| **Macro** | `get_gdp` · `get_cpi` · `get_interest_rates` · `get_vix` · `get_yield_curve` | FRED |
+| **News & Intel** | `get_y2_news` · `get_y2_recap` · `get_y2_report` | Y2 / GloriaAI |
+| **Social Sentiment** | `get_trending_tokens` · `get_token_mentions` · `search_x_posts` | Elfa AI · X |
+| **Trading (HL)** | `get_hl_account` · `place_hl_order` · `get_hl_positions` + 4 more | Hyperliquid |
+| **Trading (Aster)** | `get_aster_account` · `place_aster_order` · `get_aster_klines` + 4 more | Aster DEX |
+| **Prediction Mkts** | `get_polymarket_markets` · `place_poly_order` + 2 more | Polymarket |
+| **Technical Analysis** | `compute_sma` · `compute_rsi` · `compute_macd` · `compute_bollinger` | Built-in |
+| **Browser (3-Tier)** | `open_in_browser` · `browse_task` · `computer_use_task` | Chrome · Playwright · Anthropic |
+| **Computer Control** | `launch_app` · `run_shell` · `screenshot` · `type_text` + 2 more | macOS native |
+| **Guardrails** | `check_trade_limit` · `kill_switch` · `guardrails_status` + 2 more | Built-in |
 
 ---
 
@@ -91,64 +129,32 @@ Once configured, start the autonomous monitoring loop:
 | 🛡️ **Risk Manager** | Position sizing, PnL, risk | Cross-venue portfolio |
 | 🔧 **Ops** | File management, data export | Filesystem, GitHub |
 
-### Team Agents (Upsonic)
-
-| Agent | Role | Tools |
-|-------|------|-------|
-| 📊 **Analyst** | Research + TA | CRYPTO_TOOLS + MACRO_TOOLS + SENTIMENT_TOOLS |
-| 🛡️ **RiskManager** | Risk assessment | ALL_TOOLS |
-| ⚡ **Trader** | Execution | TRADING_TOOLS |
-
 ---
 
-## 📊 57+ Tools Across 9 Domains
-
-| Domain | Tools | Auth |
-|--------|-------|------|
-| **CoinGecko** | 3 | Free |
-| **YFinance** | Stocks, options, fundamentals | Free |
-| **FRED** | GDP, CPI, rates, yield curve, VIX | Free key |
-| **Y2 / GloriaAI** | News sentiment, recaps, reports | API key |
-| **Elfa AI** | Trending tokens, social mentions | API key |
-| **X / Twitter** | Tweet search, sentiment | Bearer token |
-| **Hyperliquid** | Perps trading, orderbook, positions | Wallet |
-| **Aster DEX** | Futures, leverage, klines, funding | API key |
-| **Polymarket** | Prediction markets, odds, trading | Free browse / key for trading |
-| **TA Engine** | SMA, RSI, MACD, Bollinger | Built-in |
-| **Guardrails** | Trade limits, kill switch, daily loss | Built-in |
-
----
-
-## 🤖 Autonomous Architecture
+## 🛡️ Autonomous Architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                  SENTINEL RUNTIME                    │
-│                                                     │
-│  ┌──────────── MONITORS ──────────────┐            │
-│  │ Price (15m) • Positions (30m)      │            │
-│  │ Sentiment (60m) • Macro (6h)       │            │
-│  └──────────────────────────────────────┘           │
-│          ↓ threshold breach                         │
-│  ┌──────────── TEAM ─────────────────┐             │
-│  │ Analyst → RiskManager → Trader    │             │
-│  │ 57+ tools • 20 @tool scrapers    │             │
-│  └──────────────────────────────────────┘           │
-│          ↓ decision                                 │
-│  ┌──────────── GUARDRAILS ────────────┐            │
-│  │ Max trade: $100 • Daily limit: 5   │            │
-│  │ Max loss: $250 • Kill switch       │            │
-│  └──────────────────────────────────────┘           │
-│          ↓ execute / escalate                       │
-│  ┌──────────── OUTPUT ────────────────┐            │
-│  │ Telegram • NATS • Decision Log    │             │
-│  └──────────────────────────────────────┘           │
-│                                                     │
-│  ┌──────────── MEMORY ────────────────┐            │
-│  │ Decisions • Snapshots • Trades     │            │
-│  │ SQLite (Upsonic Memory)            │            │
-│  └──────────────────────────────────────┘           │
-└─────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                   HYPER-SENTINEL v3 RUNTIME                   │
+│                                                              │
+│  ┌─── MONITORS ──────────────────────────────────────────┐  │
+│  │ Price (15m) · Positions (30m) · Sentiment (60m)       │  │
+│  │ Macro (6h) — threshold-based, zero LLM cost          │  │
+│  └───────────────────────────────────────────────────────┘  │
+│                       ↓ threshold breach                     │
+│  ┌─── AGENT TEAM ────────────────────────────────────────┐  │
+│  │ Analyst → RiskManager → Trader                        │  │
+│  │ 57+ tools · 10+ data sources · 20 @tool scrapers     │  │
+│  └───────────────────────────────────────────────────────┘  │
+│                       ↓ decision                             │
+│  ┌─── GUARDRAILS ────────────────────────────────────────┐  │
+│  │ Max: $100/trade · 5/day · $250 loss limit · Kill SW   │  │
+│  └───────────────────────────────────────────────────────┘  │
+│                       ↓ execute / escalate                   │
+│  ┌─── OUTPUT ────────────────────────────────────────────┐  │
+│  │ Telegram · NATS broadcast · Decision log · Memory     │  │
+│  └───────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -213,6 +219,19 @@ Once configured, start the autonomous monitoring loop:
 
 ---
 
+## Generation Lineage
+
+| Gen | Project | Key Upgrade |
+|-----|---------|-------------|
+| 1st | `fintech-terminal` | Single agent, foundation |
+| 2nd | `agentic-fintech-terminal` | 5-agent swarm, 7 MCP servers |
+| 3rd | `agentic-hyper-terminal` | Dual-DEX, FRED macro, browser automation |
+| 4th | `agentic-hyper-sentinel` | Autonomous 24/7, monitors, missions, guardrails |
+| 5th | `hyper-sentinel-v2` | NATS pub/sub, Upsonic Teams, @tool scrapers, coordinate mode |
+| **6th** | **`hyper-sentinel-v3`** | **3-tier browser automation, multi-LLM, Docker shell isolation** |
+
+---
+
 ## 📁 Project Structure
 
 ```
@@ -251,6 +270,7 @@ hyper-sentinel-v3/
 ├── infrastructure/
 │   └── nats/                # NATS server config
 ├── docs/                    # Architecture + setup docs
+├── CAPABILITIES.md          # Full 57+ tool reference
 ├── docker-compose.yml
 └── pyproject.toml
 ```
@@ -259,10 +279,8 @@ hyper-sentinel-v3/
 
 ## License
 
-AGPL-3.0
+Copyright © 2026 Morgan Fisher. All rights reserved. Viewing only — see [LICENSE](LICENSE).
 
 ---
 
-**Built by the [Hyper Sentinel](https://github.com/hyper-sentinel) team**
-
-*Forked from [hyper-sentinel-v2](https://github.com/hyper-sentinel/hyper-sentinel-v2) · March 2026*
+<p align="center"><strong>Built by the <a href="https://github.com/hyper-sentinel">Hyper Sentinel</a> team · 6th Generation · March 2026</strong></p>
