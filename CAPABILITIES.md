@@ -262,6 +262,53 @@ All agent communication flows through NATS subjects:
 
 ---
 
+## 🌐 REST API Server
+
+Every tool is exposed as an HTTP endpoint via `api_server.py` — a FastAPI server with auto-generated Swagger documentation.
+
+### Endpoints
+
+| Route | Method | Description |
+|-------|--------|-------------|
+| `/` | GET | API info, tool count, version |
+| `/health` | GET | Health check |
+| `/docs` | GET | Swagger UI (interactive) |
+| `/redoc` | GET | ReDoc (alternative docs) |
+| `/api/v1/tools` | GET | List all tools with schemas |
+| `/api/v1/tools/{name}` | GET | Tool info + usage example |
+| `/api/v1/tools/{name}` | POST | Execute a tool |
+
+### Auth Tiers
+
+| Tier | Tools | Auth |
+|------|-------|------|
+| **Public** | Crypto prices, FRED, news, Elfa, Aster market data, Polymarket browse | None required |
+| **Private** | HL trading, Aster orders, Polymarket trades, account info | `X-API-Key` header |
+
+### Setup
+
+```bash
+# 1. Add API keys to .env (optional — without this, all tools are open)
+echo 'API_KEYS=sk-your-key-here' >> .env
+
+# 2. Start the API server
+uv run python api_server.py
+
+# 3. Open Swagger docs
+open http://localhost:8000/docs
+```
+
+### Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `API_KEYS` | *(empty = dev mode)* | Comma-separated API keys for auth |
+| `API_PORT` | `8000` | Server port |
+| `API_HOST` | `0.0.0.0` | Bind address |
+| `API_RATE_LIMIT` | `60` | Requests per minute per key |
+
+---
+
 ## 📦 Core Dependencies
 
 | Package | Purpose |
@@ -285,6 +332,8 @@ All agent communication flows through NATS subjects:
 | `pydantic` | Data validation + serialization |
 | `schedule` | Cron-style task scheduling |
 | `hyperliquid-python-sdk` | Hyperliquid DEX trading |
+| `fastapi` | REST API server framework (auto-generated endpoints) |
+| `uvicorn` | ASGI server for FastAPI |
 
 ---
 

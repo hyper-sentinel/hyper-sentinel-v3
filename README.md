@@ -99,6 +99,42 @@ Once configured, start the autonomous monitoring loop:
 
 ---
 
+## 🌐 REST API
+
+Every tool is also available as an HTTP endpoint via the built-in **FastAPI** server with Swagger docs.
+
+```bash
+uv run python api_server.py
+# → http://localhost:8000/docs   (Swagger UI)
+# → http://localhost:8000/redoc  (ReDoc)
+```
+
+| Feature | Details |
+|---------|---------|
+| **Endpoints** | `POST /api/v1/tools/{tool_name}` — one endpoint per tool |
+| **Auth** | `X-API-Key` header for trading tools; public tools (prices, news) require no auth |
+| **Rate Limit** | 60 req/min per key (configurable via `API_RATE_LIMIT`) |
+| **Docs** | Auto-generated Swagger at `/docs` |
+
+**Quick test (no auth needed):**
+```bash
+curl http://localhost:8000/api/v1/tools/get_crypto_price \
+  -X POST -H "Content-Type: application/json" \
+  -d '{"coin_id": "bitcoin"}'
+```
+
+**Authenticated (trading):**
+```bash
+curl http://localhost:8000/api/v1/tools/place_hl_order \
+  -X POST -H "Content-Type: application/json" \
+  -H "X-API-Key: sk-your-key" \
+  -d '{"coin": "ETH", "side": "buy", "size": 0.1}'
+```
+
+> Set `API_KEYS=sk-key1,sk-key2` in `.env` to enable auth. Without it, all tools are open (dev mode).
+
+---
+
 ## 🔧 Tech Stack
 
 | Layer | Technology |
@@ -113,6 +149,7 @@ Once configured, start the autonomous monitoring loop:
 | **Notifications** | Telegram (bot + client) |
 | **Terminal UI** | Rich |
 | **Deploy** | Docker Compose → Cloud Run |
+| **REST API** | FastAPI + Uvicorn — auto-generated Swagger at `/docs` |
 
 ---
 
