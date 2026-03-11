@@ -37,8 +37,8 @@
 │   └───────────────────────────────────────────────────────────┘ │
 │                           ↕ NATS pub/sub                         │
 │   ┌─── DATA LAYER ────────────────────────────────────────────┐ │
-│   │  CoinGecko · YFinance · FRED · Y2 · Elfa · X             │ │
-│   │  Hyperliquid SDK · Aster REST · Polymarket CLOB           │ │
+│   │  CoinGecko · YFinance · FRED · EODHD · Y2 · Elfa · X     │ │
+│   │  Hyperliquid SDK · Aster REST · Polymarket CLOB · DuckDB  │ │
 │   └───────────────────────────────────────────────────────────┘ │
 │                           ↕ events                               │
 │   ┌─── AUTONOMOUS LAYER ─────────────────────────────────────┐ │
@@ -362,6 +362,103 @@ Agent → ✅ Order filled: 100 YES shares @ $0.72
 
 ---
 
+## 🦆 DuckDB Analytics Engine
+
+Embedded columnar database for SQL-native quantitative analysis — no external database server required.
+
+### What Is DuckDB?
+
+DuckDB is an **embedded analytical database** (like SQLite but columnar). It runs inside the Python process — zero config, zero server, zero network. Optimized for window functions, aggregations, and analytical queries.
+
+### Why DuckDB over Pandas?
+
+| Feature | Pandas | DuckDB |
+|---------|--------|--------|
+| **Query language** | Python API | SQL (window functions, CTEs, JOINs) |
+| **Performance** | Row-oriented, single-threaded | Columnar, auto-parallel, vectorized |
+| **Memory** | Loads entire dataset | Streams results, memory-efficient |
+| **Data ingestion** | CSV/JSON parsing | Zero-copy from PyArrow |
+
+### 10 SQL Analytics Functions
+
+All quantitative analysis executes as **pure SQL** inside DuckDB:
+
+| # | Function | SQL Technique | Output |
+|---|----------|---------------|--------|
+| 1 | `daily_returns()` | `LAG()` window | Day-over-day % change |
+| 2 | `moving_averages()` | `AVG() OVER (ROWS BETWEEN)` | 50/200-day SMAs |
+| 3 | `bollinger_bands()` | `STDDEV_POP() OVER ()` + CTE | ±2σ bands |
+| 4 | `cross_signals()` | `LAG()` + `CASE WHEN` | Golden/Death Cross |
+| 5 | `rolling_volatility()` | `STDDEV_POP()` + `SQRT(252)` | 30-day annualized vol |
+| 6 | `max_drawdown()` | `MAX() OVER (UNBOUNDED)` | Peak-to-trough drawdown |
+| 7 | `monthly_returns()` | 3 chained CTEs + self-JOIN | MoM returns |
+| 8 | `yearly_returns()` | CTEs + `LAG()` | YoY returns |
+| 9 | `backtest_ma_crossover()` | `EXP(SUM(LN()))` | Strategy equity curve |
+| 10 | `buy_and_hold()` | `EXP(SUM(LN()))` | Benchmark equity curve |
+
+### Data Pipeline
+
+```
+EODHD API → Pandas DataFrame → PyArrow Table → DuckDB (zero-copy)
+                                                   ↓
+                                          SQL Analytics Engine
+                                                   ↓
+                                          Matplotlib Charts
+```
+
+---
+
+## 📊 EODHD Setup
+
+> API: [eodhd.com](https://eodhd.com) · Coverage: 150,000+ instruments · 70+ exchanges
+
+### What Is EODHD?
+
+EODHD (End of Day Historical Data) provides **institutional-quality market data** — end-of-day OHLCV, intraday data, fundamentals, dividends, splits, insider trades, and more. Covers stocks, ETFs, mutual funds, bonds, forex, and crypto across 70+ global exchanges.
+
+### Getting an API Key
+
+1. Go to [eodhd.com](https://eodhd.com) → Create account
+2. Navigate to **Settings** → **API Token**
+3. Copy your API key
+4. Free tier: 20 API calls/day (enough for testing)
+5. Paid plans: from $19.99/mo for full access
+
+### `.env` Configuration
+
+```bash
+# EODHD API
+EODHD_API_KEY=your_eodhd_api_key_here
+```
+
+### In-Terminal Setup
+
+```
+⚡ You → add eodhd
+  Paste API Key: ...
+  ✅ Saved to .env
+```
+
+### Key Endpoints
+
+| Endpoint | Description | Example |
+|----------|-------------|--------|
+| `/api/eod/{SYMBOL}.{EXCHANGE}` | End-of-day OHLCV | `AAPL.US`, `BTC-USD.CC` |
+| `/api/intraday/{SYMBOL}.{EXCHANGE}` | Intraday 1m/5m/1h | Real-time analysis |
+| `/api/fundamentals/{SYMBOL}.{EXCHANGE}` | Company fundamentals | Financials, valuations |
+| `/api/exchanges-list` | All supported exchanges | 70+ global exchanges |
+
+### Symbol Format
+
+| Market | Format | Example |
+|--------|--------|---------|
+| US Stocks | `{TICKER}.US` | `AAPL.US`, `MSFT.US` |
+| Crypto | `{PAIR}.CC` | `BTC-USD.CC`, `ETH-USD.CC` |
+| UK Stocks | `{TICKER}.LSE` | `SHEL.LSE` |
+| Forex | `{PAIR}.FOREX` | `EURUSD.FOREX` |
+
+---
+
 ## 📁 Project Structure
 
 ```
@@ -426,6 +523,7 @@ hyper-sentinel-v3/
 | `TELEGRAM_CHAT_ID` | For notifications | Chat to send to |
 | `SENTINEL_MAX_TRADE_USD` | Optional | Max trade size (default: $100) |
 | `SENTINEL_MAX_DAILY_TRADES` | Optional | Max trades/day (default: 5) |
+| `EODHD_API_KEY` | For EODHD data | EODHD historical/fundamentals |
 | `SENTINEL_MAX_DAILY_LOSS` | Optional | Max daily loss (default: $250) |
 
 ---

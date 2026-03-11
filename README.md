@@ -12,7 +12,7 @@ Crypto · Equities · Options · Prediction Markets · Macro · Sentiment · Bro
 <img src="https://img.shields.io/badge/PYTHON-3.13+-blue?style=for-the-badge&logo=python&logoColor=white" />
 <img src="https://img.shields.io/badge/AI-AUTONOMOUS-blueviolet?style=for-the-badge" />
 <img src="https://img.shields.io/badge/CLAUDE · GEMINI · GROK-LLM-green?style=for-the-badge" />
-<img src="https://img.shields.io/badge/TOOLS-57+-orange?style=for-the-badge" />
+<img src="https://img.shields.io/badge/TOOLS-70+-orange?style=for-the-badge" />
 <img src="https://img.shields.io/badge/LICENSE-PROPRIETARY-red?style=for-the-badge" />
 </p>
 
@@ -23,6 +23,7 @@ Crypto · Equities · Options · Prediction Markets · Macro · Sentiment · Bro
 <img src="https://img.shields.io/badge/data-Polymarket-green" />
 <img src="https://img.shields.io/badge/data-Hyperliquid-cyan" />
 <img src="https://img.shields.io/badge/data-Aster%20DEX-orange" />
+<img src="https://img.shields.io/badge/data-EODHD-teal" />
 <img src="https://img.shields.io/badge/data-Elfa%20AI-pink" />
 <img src="https://img.shields.io/badge/data-X%20%2F%20Twitter-black" />
 <img src="https://img.shields.io/badge/data-Y2%20Intel-red" />
@@ -32,9 +33,11 @@ Crypto · Equities · Options · Prediction Markets · Macro · Sentiment · Bro
 
 ## 📦 Overview
 
-Hyper-Sentinel v3 is an **autonomous AI agent swarm** that conducts 24/7 financial surveillance, executes trades across multiple DEXs, and controls your computer through natural language — powered by your choice of LLM provider.
+Hyper-Sentinel v3 is an **autonomous AI agent swarm** that conducts 24/7 financial surveillance, executes trades across multiple DEXs, runs SQL-native quantitative analysis via DuckDB, and controls your computer through natural language — powered by your choice of LLM provider.
 
-> 📋 [**Full Capabilities Reference →**](CAPABILITIES.md) — detailed breakdown of all 57+ tools, agent modes, data sources, and architecture.
+> 📋 [**Full Capabilities Reference →**](CAPABILITIES.md) — detailed breakdown of all 70+ tools, agent modes, data sources, and architecture.
+
+> 🏗️ [**Architecture & Trading Setup →**](ARCHITECTURE.md) — system design + Hyperliquid, Aster, Polymarket, EODHD setup guides.
 
 **3 free data sources. No API keys required for market data.** You only need one LLM provider key.
 
@@ -53,6 +56,8 @@ Hyper-Sentinel v3 is an **autonomous AI agent swarm** that conducts 24/7 financi
 | **Trading (Aster)** | `get_aster_account` · `place_aster_order` · `get_aster_klines` + 4 more | Aster DEX |
 | **Prediction Mkts** | `get_polymarket_markets` · `place_poly_order` + 2 more | Polymarket |
 | **Technical Analysis** | `compute_sma` · `compute_rsi` · `compute_macd` · `compute_bollinger` | Built-in |
+| **Quant Analytics** | `daily_returns` · `bollinger_bands` · `rolling_volatility` · `max_drawdown` + 6 more | DuckDB SQL |
+| **EODHD Data** | `get_eod_history` · `get_eod_fundamentals` · `get_eod_intraday` | EODHD |
 | **Browser (3-Tier)** | `open_in_browser` · `browse_task` · `computer_use_task` | Chrome · Playwright · Anthropic |
 | **Computer Control** | `launch_app` · `run_shell` · `screenshot` · `type_text` + 2 more | macOS native |
 | **Guardrails** | `check_trade_limit` · `kill_switch` · `guardrails_status` + 2 more | Built-in |
@@ -103,8 +108,8 @@ Once configured, start the autonomous monitoring loop:
 | **Browser Automation** | Tier 1: Chrome direct · Tier 2: browser-use + Playwright · Tier 3: Computer Use |
 | **Message Fabric** | NATS.io + JetStream |
 | **Trading** | Hyperliquid SDK + Aster DEX + Polymarket CLOB |
-| **Data** | CoinGecko · FRED · Y2 · Elfa AI · X · YFinance |
-| **Storage** | SQLite (Upsonic Memory + decision logs) → Postgres |
+| **Data** | CoinGecko · FRED · EODHD · Y2 · Elfa AI · X · YFinance |
+| **Analytics** | DuckDB (embedded columnar) + PyArrow (zero-copy) |
 | **Notifications** | Telegram (bot + client) |
 | **Terminal UI** | Rich |
 | **Deploy** | Docker Compose → Cloud Run |
@@ -115,7 +120,7 @@ Once configured, start the autonomous monitoring loop:
 
 | Mode | Command | What Happens |
 |------|---------|-------------|
-| **Solo** | `solo` | Single MarketAgent has all 57+ tools directly |
+| **Solo** | `solo` | Single MarketAgent has all 70+ tools directly |
 | **Swarm** | `swarm` | 5 Agno agents coordinate — Captain routes to specialists |
 | **Team** | `team` | 3 Upsonic agents in coordinate mode with shared memory |
 
@@ -128,6 +133,22 @@ Once configured, start the autonomous monitoring loop:
 | ⚡ **Trader** | Trade execution | Hyperliquid, Aster, Polymarket |
 | 🛡️ **Risk Manager** | Position sizing, PnL, risk | Cross-venue portfolio |
 | 🔧 **Ops** | File management, data export | Filesystem, GitHub |
+
+### Team Agents (Upsonic)
+
+Upsonic provides **coordinate mode** — agents share memory, enforce safety policies, and hand off tasks in sequence. Built-in Safety Engine validates every action before execution.
+
+| Agent | Role | Tool Categories | Upsonic Features |
+|-------|------|----------------|-----------------|
+| 📊 **Analyst** | Research + technical analysis | `CRYPTO_TOOLS` + `MACRO_TOOLS` + `SENTIMENT_TOOLS` | Shared memory, @tool wrappers |
+| 🛡️ **RiskManager** | Risk assessment + guardrails | `ALL_TOOLS` (full read access) | Safety Engine, PII anonymization |
+| ⚡ **Trader** | Execution only | `TRADING_TOOLS` (write access) | Approval-gated, audit logged |
+
+**Upsonic Key Capabilities:**
+- 🧠 **Shared Memory** — agents persist context across tasks via SQLite-backed memory
+- 🛡️ **Safety Engine** — `PIIAnonymizePolicy` + `FinancialDataPolicy` enforce compliance
+- 🔧 **@tool Wrappers** — 20 scraper functions decorated as Upsonic tools (zero MCP overhead)
+- 📋 **Coordinate Mode** — Analyst → RiskManager → Trader pipeline with handoff
 
 ---
 
@@ -144,7 +165,7 @@ Once configured, start the autonomous monitoring loop:
 │                       ↓ threshold breach                     │
 │  ┌─── AGENT TEAM ────────────────────────────────────────┐  │
 │  │ Analyst → RiskManager → Trader                        │  │
-│  │ 57+ tools · 10+ data sources · 20 @tool scrapers     │  │
+│  │ 70+ tools · 11+ data sources · 20 @tool scrapers     │  │
 │  └───────────────────────────────────────────────────────┘  │
 │                       ↓ decision                             │
 │  ┌─── GUARDRAILS ────────────────────────────────────────┐  │

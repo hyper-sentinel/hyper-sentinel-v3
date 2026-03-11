@@ -1,6 +1,6 @@
 # 📋 Hyper-Sentinel v3 — Full Capabilities Reference
 
-> **57+ autonomous AI tools** across real-time market surveillance, multi-venue trading, macroeconomic analysis, social sentiment intelligence, browser automation, computer control, and 24/7 autonomous operation — powered by multi-LLM architecture with Claude, Gemini, and Grok.
+> **70+ autonomous AI tools** across real-time market surveillance, multi-venue trading, macroeconomic analysis, social sentiment intelligence, quantitative analytics (DuckDB), browser automation, computer control, and 24/7 autonomous operation — powered by multi-LLM architecture with Claude, Gemini, and Grok.
 
 ---
 
@@ -23,7 +23,7 @@ Set **one** key in your `.env` — the agent auto-detects your provider from the
 
 | Mode | Framework | Agents | Coordination | Command |
 |------|-----------|--------|-------------|---------|
-| **Solo** | Direct | 1 MarketAgent | Single agent, all 57+ tools | `solo` |
+| **Solo** | Direct | 1 MarketAgent | Single agent, all 70+ tools | `solo` |
 | **Swarm** | Agno | 5 specialists | Captain routes to specialists | `swarm` |
 | **Team** | Upsonic | 3 specialists | Coordinate mode + shared memory | `team` |
 
@@ -47,7 +47,7 @@ Set **one** key in your `.env` — the agent auto-detects your provider from the
 
 ---
 
-## 📊 All 57+ Tools
+## 📊 All 70+ Tools
 
 ### 🪙 Cryptocurrency — CoinGecko (Tools 1–3)
 
@@ -166,6 +166,31 @@ Set **one** key in your `.env` — the agent auto-detects your provider from the
 | 56 | `type_text` | Type text into the active application | AppleScript |
 | 57 | `clipboard_ops` | Read/write system clipboard | `pbcopy` / `pbpaste` |
 
+### 📊 EODHD Historical Data (Tools 58–60)
+
+| # | Tool | Description | Source | Auth |
+|---|------|-------------|--------|------|
+| 58 | `get_eod_history` | End-of-day OHLCV data for any instrument (150K+ symbols globally) | EODHD | 🔑 API key |
+| 59 | `get_eod_fundamentals` | Company fundamentals — financials, valuations, dividends, insider trades | EODHD | 🔑 API key |
+| 60 | `get_eod_intraday` | Intraday OHLCV data (1m, 5m, 1h intervals) for real-time analysis | EODHD | 🔑 API key |
+
+### 🦆 DuckDB SQL Analytics Engine (Tools 61–70)
+
+All quantitative analysis runs as **pure SQL inside DuckDB** — embedded columnar database with zero-copy Arrow ingestion. No external database server required.
+
+| # | Tool | Description | SQL Technique |
+|---|------|-------------|---------------|
+| 61 | `daily_returns` | Day-over-day percentage change | `LAG()` window function |
+| 62 | `moving_averages` | 50-day and 200-day simple moving averages | `AVG() OVER (ROWS BETWEEN)` |
+| 63 | `bollinger_bands` | ±2σ bands around 50-day MA | `STDDEV_POP() OVER ()` + CTE |
+| 64 | `cross_signals` | Golden Cross / Death Cross detection | `LAG()` + `CASE WHEN` |
+| 65 | `rolling_volatility` | 30-day rolling annualized volatility | `STDDEV_POP()` + `SQRT(252)` |
+| 66 | `max_drawdown` | Peak-to-trough drawdown percentage | `MAX() OVER (UNBOUNDED)` |
+| 67 | `monthly_returns` | Month-over-month returns | 3 chained CTEs + self-JOIN |
+| 68 | `yearly_returns` | Year-over-year returns | CTEs + `LAG()` |
+| 69 | `backtest_ma_crossover` | MA crossover strategy equity curve | `EXP(SUM(LN()))` cumulative |
+| 70 | `buy_and_hold` | Passive benchmark equity curve | `EXP(SUM(LN()))` cumulative |
+
 ---
 
 ## 🛡️ Autonomous Runtime — Sentinel Mode
@@ -225,13 +250,15 @@ All agent communication flows through NATS subjects:
 | **Yahoo Finance** | All NYSE/NASDAQ equities + options | ❌ Free | ~2,000 req/hr |
 | **Polymarket** | Active prediction markets | ❌ Free (browse) | Public API |
 | **FRED** | 800,000+ economic time series | 🔑 Free key | 120 req/min |
+| **EODHD** | 150,000+ instruments globally (EOD + intraday + fundamentals) | 🔑 API key | Per-plan |
 | **Y2 Intelligence** | AI-curated financial news + analysis | 🔑 API key | Per-plan |
 | **Elfa AI** | Social sentiment + trending tokens | 🔑 API key | Per-plan |
 | **X / Twitter** | Real-time social posts + sentiment | 🔑 Bearer | Per-plan |
 | **Hyperliquid** | Perpetual futures + orderbook | 🔐 Wallet | No limit |
 | **Aster DEX** | Futures, leverage, funding | 🔑 API key | Per-plan |
+| **DuckDB** | Embedded columnar analytics (local, zero config) | ❌ Built-in | Unlimited |
 
-> **3 sources are completely free** (CoinGecko, Yahoo Finance, Polymarket). FRED requires a free API key. The rest are optional premium integrations.
+> **3 sources are completely free** (CoinGecko, Yahoo Finance, Polymarket). FRED and EODHD require free API keys. DuckDB runs locally. The rest are optional premium integrations.
 
 ---
 
@@ -243,6 +270,8 @@ All agent communication flows through NATS subjects:
 | `openai` | GPT-4 / Gemini / Grok (multi-provider via compatible SDK) |
 | `upsonic` | Agent framework — Teams, Memory, Safety Engine, @tool |
 | `agno` | Swarm orchestration — 5-agent coordinate mode |
+| `duckdb` | Embedded columnar analytics database (SQL engine) |
+| `pyarrow` | Zero-copy data ingestion for DuckDB |
 | `browser-use` | Tier 2 LLM-driven browser automation |
 | `playwright` | Browser engine for Tier 2 |
 | `langchain-anthropic` | LangChain adapter for browser-use |
@@ -250,6 +279,7 @@ All agent communication flows through NATS subjects:
 | `rich` | Terminal UI — tables, panels, progress |
 | `pandas` + `numpy` | Data manipulation + quantitative analysis |
 | `pandas-ta` | Technical analysis indicators (70+) |
+| `matplotlib` | Publication-quality financial charts |
 | `requests` | HTTP client for all API integrations |
 | `python-dotenv` | Environment variable management |
 | `pydantic` | Data validation + serialization |
@@ -270,12 +300,12 @@ All agent communication flows through NATS subjects:
 │                          ↕ tool calls                        │
 │  ┌─── AGENT LAYER ────────────────────────────────────────┐ │
 │  │  Solo (1) · Swarm (5 Agno) · Team (3 Upsonic)         │ │
-│  │  57+ tools · Shared memory · Safety policies           │ │
+│  │  70+ tools · Shared memory · Safety policies           │ │
 │  └────────────────────────────────────────────────────────┘ │
 │                          ↕ NATS pub/sub                      │
 │  ┌─── DATA LAYER ─────────────────────────────────────────┐ │
-│  │  CoinGecko · YFinance · FRED · Y2 · Elfa · X          │ │
-│  │  Hyperliquid · Aster · Polymarket                      │ │
+│  │  CoinGecko · YFinance · FRED · EODHD · Y2 · Elfa · X  │ │
+│  │  Hyperliquid · Aster · Polymarket · DuckDB (local)     │ │
 │  └────────────────────────────────────────────────────────┘ │
 │                          ↕ events                            │
 │  ┌─── AUTONOMOUS LAYER ──────────────────────────────────┐ │
