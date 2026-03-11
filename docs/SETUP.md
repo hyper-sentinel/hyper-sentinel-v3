@@ -1,6 +1,6 @@
-# Hyper-Sentinel v2 — First-Time Setup
+# Hyper-Sentinel v3 — First-Time Setup
 
-This guide assumes you've never used Docker, NATS, or any of the new Sentinel v2 stack before. Follow each step in order.
+This guide assumes you've never used Docker, NATS, or any of the new Sentinel v3 stack before. Follow each step in order.
 
 ---
 
@@ -23,7 +23,7 @@ You should see a version number. If you do, move on.
 
 ## Step 2 · Install Docker Desktop
 
-Docker is the app that lets you run services (like NATS) in containers on your Mac. Sentinel v2 needs it to run the NATS message server.
+Docker is the app that lets you run services (like NATS) in containers on your Mac. Sentinel v3 needs it to run the NATS message server.
 
 ### 2a. Download Docker Desktop
 
@@ -96,14 +96,14 @@ You should see a version number.
 
 If you already have it:
 ```bash
-cd ~/Antigravity/Python/hyper-sentinel-v2
+cd ~/Antigravity/Python/hyper-sentinel-v3
 ```
 
 If you're cloning fresh:
 ```bash
 cd ~/Antigravity/Python
-git clone https://github.com/hyper-sentinel/hyper-sentinel-v2.git
-cd hyper-sentinel-v2
+git clone https://github.com/hyper-sentinel/hyper-sentinel-v3.git
+cd hyper-sentinel-v3
 ```
 
 ---
@@ -210,7 +210,7 @@ You should see the Sentinel banner, a status dashboard showing your config, and 
 Open a **second terminal** (keep Sentinel running in the first one) and send a test message:
 
 ```bash
-cd ~/Antigravity/Python/hyper-sentinel-v2
+cd ~/Antigravity/Python/hyper-sentinel-v3
 bash scripts/test-publish.sh
 ```
 
@@ -226,7 +226,7 @@ From now on, your daily workflow is:
 # 1. Make sure Docker Desktop is running (whale icon in menu bar)
 
 # 2. Start NATS (skip if already running — check with 'docker compose ps')
-cd ~/Antigravity/Python/hyper-sentinel-v2
+cd ~/Antigravity/Python/hyper-sentinel-v3
 docker compose up -d nats
 
 # 3. Run Sentinel

@@ -1,4 +1,4 @@
-# Hyper-Sentinel v2 — Docker Compose Orchestration
+# Hyper-Sentinel v3 — Docker Compose Orchestration
 # =================================================
 # Architecture: NATS (nervous system) + Ollama (local LLM) + Agent containers
 # Pattern: tobalo/gogent Docker Compose with sentinel_network bridge

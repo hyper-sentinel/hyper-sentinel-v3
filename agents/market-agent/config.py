@@ -1,5 +1,5 @@
 """
-Hyper-Sentinel v2 — MarketAgent Configuration
+Hyper-Sentinel v3 — MarketAgent Configuration
 ==============================================
 Centralized, environment-driven configuration.
 All config flows from env vars — no hardcoded values.

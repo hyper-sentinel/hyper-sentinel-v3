@@ -1,5 +1,5 @@
 """
-Hyper-Sentinel v2 — MarketAgent Intelligence Layer
+Hyper-Sentinel v3 — MarketAgent Intelligence Layer
 ====================================================
 Upsonic Agent with YFinanceTools and Safety Engine policies.
 This is the brain — the subscriber triggers it, this does the thinking.

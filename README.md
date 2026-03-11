@@ -1,10 +1,10 @@
-# 🛡️ Hyper-Sentinel v2
+# 🛡️ Hyper-Sentinel v3
 
-**Autonomous Crypto Surveillance & Execution Agent — 5th Generation**
+**Autonomous AI Agent Swarm for Financial Surveillance, Trading & Market Intelligence — 6th Generation**
 
-> 57+ tools · 20 @tool scrapers · 3 agent modes · 4 monitors · NATS pub/sub · Upsonic + Agno
+> Multi-LLM (Claude, Gemini, Grok) · 3-tier browser automation · 57+ tools · NATS JetStream · 10+ data sources
 
-5th Gen — rebuilt from the ground up on NATS, Upsonic Teams, and dual-framework agents. Same mission as [Sentinel v1](https://github.com/hyper-sentinel/agentic-hyper-sentinel): 24/7 autonomous operation with guardrails. New everything else.
+6th Gen — forked from v2 with 3-tier browser automation (instant open → LLM+Playwright → computer use), multi-provider LLM support, and Docker-isolated shell execution. Same mission as [Sentinel v1](https://github.com/hyper-sentinel/agentic-hyper-sentinel): 24/7 autonomous operation with guardrails.
 
 ---
 
@@ -16,7 +16,8 @@
 | 2nd | `agentic-fintech-terminal` | 5-agent swarm, 7 MCP servers |
 | 3rd | `agentic-hyper-terminal` | Dual-DEX, FRED macro, browser automation |
 | 4th | `agentic-hyper-sentinel` | Autonomous 24/7, monitors, missions, guardrails |
-| **5th** | **`hyper-sentinel-v2`** | **NATS pub/sub, Upsonic Teams, @tool scrapers, coordinate mode** |
+| 5th | `hyper-sentinel-v2` | NATS pub/sub, Upsonic Teams, @tool scrapers, coordinate mode |
+| **6th** | **`hyper-sentinel-v3`** | **3-tier browser automation, multi-LLM, Docker shell isolation** |
 
 ---
 
@@ -39,7 +40,7 @@ brew install --cask docker
 ### Step 3 · Run it
 
 ```bash
-git clone https://github.com/hyper-sentinel/hyper-sentinel-v2.git && cd hyper-sentinel-v2 && docker compose up -d nats && uv run main.py
+git clone https://github.com/hyper-sentinel/hyper-sentinel-v3.git && cd hyper-sentinel-v3 && docker compose up -d nats && uv run main.py
 ```
 
 **That's it.** On first run, the interactive setup walks you through configuration — paste any supported AI provider key and you're live. All keys are auto-saved to `.env`.
@@ -60,7 +61,8 @@ Once configured, start the autonomous monitoring loop:
 | Layer | Technology |
 |-------|-----------|
 | **Agent Frameworks** | Upsonic (Teams, Memory, Safety Engine) + Agno (swarm) |
-| **LLM Providers** | Claude · Gemini · Grok · Ollama (auto-fallback) |
+| **LLM Providers** | Claude · Gemini · Grok · Ollama (auto-detect from key prefix) |
+| **Browser Automation** | Tier 1: Chrome direct · Tier 2: browser-use + Playwright · Tier 3: Computer Use |
 | **Message Fabric** | NATS.io + JetStream |
 | **Trading** | Hyperliquid SDK + Aster DEX + Polymarket CLOB |
 | **Data** | CoinGecko · FRED · Y2 · Elfa AI · X · YFinance |
@@ -200,8 +202,8 @@ Once configured, start the autonomous monitoring loop:
 | `mission list` | Show standing orders |
 | `mission add <desc>` | Create a new mission |
 | `scan <symbols>` | Publish market scan to NATS |
-| `open <site>` | Open site in Chrome (youtube, tradingview, etc.) |
-| `browse <url>` | Open any URL in your browser |
+| `open <site>` | Tier 1: Instant Chrome open (youtube, tradingview, etc.) |
+| `browse <task>` | Tier 2: LLM + Playwright browser automation (complex tasks) |
 | `add` | Show available data source integrations |
 | `add <service>` | Configure API key (hl, y2, elfa, fred, etc.) |
 | `status` | Infrastructure dashboard |
@@ -214,10 +216,13 @@ Once configured, start the autonomous monitoring loop:
 ## 📁 Project Structure
 
 ```
-hyper-sentinel-v2/
-├── main.py                  # Interactive REPL
+hyper-sentinel-v3/
+├── main.py                  # Interactive REPL + command routing
 ├── sentinel.py              # Autonomous runtime loop
+├── browser_agent.py         # 3-tier browser (Tier 1: Chrome → Tier 2: Playwright → Tier 3: Computer Use)
+├── computer_use.py          # Safe computer control (apps, system info, shell)
 ├── tools.py                 # 20 Upsonic @tool wrappers
+├── tool_registry.py         # Unified tool registration
 ├── monitors.py              # 4 continuous watchers
 ├── missions.py              # Standing orders system
 ├── memory.py                # Persistent state (SQLite → Postgres)
@@ -225,14 +230,15 @@ hyper-sentinel-v2/
 ├── strategy_runner.py       # SMA crossover auto-trading
 ├── ta_engine.py             # Technical analysis (pandas-ta)
 ├── telegram_client.py       # Telegram notifications
-├── browser_agent.py         # 3-tier browser (fast open → LLM browse → computer use)
-├── computer_use.py          # Safe computer control (apps, system info, shell)
+├── swarm.py                 # Agno 5-agent team
+├── team.py                  # Upsonic Team (coordinate mode)
+├── trading_mcp.py           # MCP trading server
+├── webhook_server.py        # TradingView webhook receiver
 ├── agents/
 │   ├── market-agent/        # Upsonic Agent + YFinanceTools
 │   ├── analyst.py           # Research specialist
 │   ├── trader.py            # Execution specialist
-│   ├── risk_manager.py      # Risk specialist
-│   └── swarm.py             # Agno 5-agent team
+│   └── risk_manager.py      # Risk specialist
 ├── scrapers/                # 8 data modules
 │   ├── crypto_scraper.py    # CoinGecko
 │   ├── fred_scraper.py      # FRED macro
@@ -244,6 +250,7 @@ hyper-sentinel-v2/
 │   └── polymarket_scraper.py
 ├── infrastructure/
 │   └── nats/                # NATS server config
+├── docs/                    # Architecture + setup docs
 ├── docker-compose.yml
 └── pyproject.toml
 ```
@@ -257,3 +264,5 @@ AGPL-3.0
 ---
 
 **Built by the [Hyper Sentinel](https://github.com/hyper-sentinel) team**
+
+*Forked from [hyper-sentinel-v2](https://github.com/hyper-sentinel/hyper-sentinel-v2) · March 2026*

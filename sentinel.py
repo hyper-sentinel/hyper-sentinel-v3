@@ -1,5 +1,5 @@
 """
-Sentinel v2 — Autonomous Crypto Surveillance & Execution Runtime
+Sentinel v3 — Autonomous Crypto Surveillance & Execution Runtime
 
 Core autonomous loop that runs 24/7:
 
@@ -351,7 +351,7 @@ class Sentinel:
     def initialize(self) -> bool:
         """Boot up all systems."""
         console.print(Panel(
-            "[bold]🛡️ SENTINEL v2 — Autonomous Mode[/]\n"
+            "[bold]🛡️ SENTINEL v3 — Autonomous Mode[/]\n"
             "[dim]Monitors · Upsonic Team · Missions · Guardrails · NATS[/]",
             border_style="bold cyan",
         ))
@@ -686,7 +686,7 @@ class Sentinel:
         # Start scheduler
         self.scheduler.start()
 
-        console.print(f"\n  [bold green]🛡️ Sentinel v2 is live — monitoring 24/7[/]")
+        console.print(f"\n  [bold green]🛡️ Sentinel v3 is live — monitoring 24/7[/]")
         console.print(f"  [dim]Press Ctrl+C to stop[/]\n")
 
         # Graceful shutdown

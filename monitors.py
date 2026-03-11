@@ -1,5 +1,5 @@
 """
-Sentinel Monitors v2 — Two-tier monitoring with direct API data.
+Sentinel Monitors v3 — Two-tier monitoring with direct API data.
 
 Tier 1: Raw data fetch via APIs → threshold comparison (no LLM cost)
 Tier 2: When alert fires → engage agent specialist for analysis

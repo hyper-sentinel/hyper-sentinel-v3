@@ -1,5 +1,5 @@
 """
-Computer Use Agent — Safe, sandboxed computer control for Sentinel v2.
+Computer Use Agent — Safe, sandboxed computer control for Sentinel v3.
 
 Tier 3 of the agentic system. Handles:
 - App launching (macOS: open -a <app>)

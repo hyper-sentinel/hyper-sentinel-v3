@@ -1,5 +1,5 @@
 """
-Hyper-Sentinel v2 — Interactive Terminal
+Hyper-Sentinel v3 — Interactive Terminal
 ==========================================
 Run with: uv run main.py
 
@@ -41,7 +41,7 @@ BANNER = """
 [bold cyan]██║  ██║   ██║   ██║     ███████╗██║  ██║[/]
 [bold cyan]╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚══════╝╚═╝  ╚═╝[/]
 
-[bold white]S E N T I N E L   v 2[/]
+[bold white]S E N T I N E L   v 3[/]
 [dim]Autonomous AI Agent Swarm · NATS · JetStream · Zero-Trust[/]
 """
 
@@ -101,7 +101,7 @@ def first_run_setup():
     """
     console.print()
     welcome = Text()
-    welcome.append("Welcome to Hyper Sentinel v2!\n", style="bold cyan")
+    welcome.append("Welcome to Hyper Sentinel v3!\n", style="bold cyan")
     welcome.append("Let's get you set up. This only happens once — your keys are saved to .env automatically.", style="dim")
     console.print(Panel(welcome, border_style="cyan", padding=(1, 3)))
     console.print()
@@ -210,7 +210,7 @@ def _bridge_api_keys():
     if not api_key or api_key == "your-api-key-here":
         return
 
-    # Map v2-style provider → all env vars each framework might check
+    # Map provider → all env vars each framework might check
     BRIDGE_MAP = {
         "CLAUDE": [
             "ANTHROPIC_API_KEY",

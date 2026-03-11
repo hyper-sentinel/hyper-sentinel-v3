@@ -1,5 +1,5 @@
 """
-Hyper-Sentinel v2 — SQLite Decision Logger
+Hyper-Sentinel v3 — SQLite Decision Logger
 ===========================================
 Every agent decision is logged with full context.
 Schema mirrors gogent's agent_logs but extended for financial intelligence.
