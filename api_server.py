@@ -44,7 +44,19 @@ from scrapers.elfa_scraper import (
     get_trending_tokens, get_top_mentions, search_mentions,
     get_trending_narratives, get_token_news,
 )
-from scrapers.x_scraper import search_tweets
+# x_scraper is class-based — create standalone wrappers
+import os as _os
+def search_x(query: str, max_results: int = 10) -> list:
+    """Search recent tweets on X (Twitter) for a query."""
+    try:
+        from scrapers.x_scraper import XScraper
+        token = _os.getenv("X_BEARER_TOKEN", "")
+        if not token:
+            return {"error": "X_BEARER_TOKEN not set in .env"}
+        client = XScraper(token)
+        return client.search_tweets(query, max_results)
+    except Exception as e:
+        return {"error": f"X search failed: {str(e)}"}
 from scrapers.hyperliquid_scraper import (
     get_hl_config, get_hl_account_info, get_hl_positions,
     get_hl_orderbook, get_hl_open_orders,
@@ -83,7 +95,7 @@ registry.register(get_news_sentiment, get_news_recap, get_intelligence_reports, 
 registry.register(get_trending_tokens, get_top_mentions, search_mentions, get_trending_narratives, get_token_news)
 
 # X / Twitter
-registry.register(search_x=search_tweets)
+registry.register(search_x)
 
 # Hyperliquid
 registry.register(
