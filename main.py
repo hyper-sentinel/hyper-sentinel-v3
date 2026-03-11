@@ -20,6 +20,15 @@ sys.path.insert(0, os.path.dirname(__file__))
 from dotenv import load_dotenv
 load_dotenv()
 
+# ── Suppress noisy debug logs — keep terminal clean ──────────────────
+import logging
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
+logging.getLogger("upsonic").setLevel(logging.WARNING)
+logging.getLogger("upsonic.sentry.pipeline").setLevel(logging.WARNING)
+logging.getLogger("agent").setLevel(logging.WARNING)
+logging.getLogger("uvicorn").setLevel(logging.WARNING)
+
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
