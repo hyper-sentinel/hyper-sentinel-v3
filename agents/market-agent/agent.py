@@ -220,6 +220,14 @@ def analyze_market_chat(user_input: str) -> str:
     config = AgentConfig()
     agent = _build_agent(config)
 
+    # Import ALL scraper tools so the solo agent has full capability
+    try:
+        from tools import ALL_TOOLS
+        scraper_tools = ALL_TOOLS
+    except ImportError:
+        scraper_tools = []
+        logger.warning("tools.py not found — solo agent will only have YFinanceTools")
+
     task = Task(
         description=user_input,
         tools=[
@@ -228,7 +236,8 @@ def analyze_market_chat(user_input: str) -> str:
                 analyst_recommendations=True,
                 company_info=True,
                 company_news=True,
-            )
+            ),
+            *scraper_tools,
         ],
     )
 

@@ -53,13 +53,13 @@ def get_fred_series(series_id: str) -> dict:
 @tool
 def get_y2_recap(ticker: str = "BTC") -> dict:
     """Get Y2 Intelligence recap report for a ticker."""
-    from scrapers.y2_scraper import get_recap as _fn
+    from scrapers.y2_scraper import get_news_recap as _fn
     return _fn(ticker)
 
 @tool
 def get_y2_sentiment(ticker: str = "BTC") -> dict:
     """Get Y2 Intelligence sentiment analysis for a ticker."""
-    from scrapers.y2_scraper import get_sentiment as _fn
+    from scrapers.y2_scraper import get_news_sentiment as _fn
     return _fn(ticker)
 
 
@@ -83,8 +83,15 @@ def get_social_mentions(query: str) -> dict:
 @tool
 def search_x(query: str, max_results: int = 10) -> list:
     """Search recent tweets on X (Twitter) for a query."""
-    from scrapers.x_scraper import search_tweets as _fn
-    return _fn(query, max_results)
+    import os as _os
+    try:
+        from scrapers.x_scraper import XScraper
+        token = _os.getenv("X_BEARER_TOKEN", "")
+        if not token:
+            return {"error": "X_BEARER_TOKEN not set"}
+        return XScraper(token).search_tweets(query, max_results)
+    except Exception as e:
+        return {"error": str(e)}
 
 
 # ── Hyperliquid (requires HL keys) ───────────────────────────────────
@@ -92,19 +99,19 @@ def search_x(query: str, max_results: int = 10) -> list:
 @tool
 def get_hl_account() -> dict:
     """Get Hyperliquid account info: equity, margin, positions."""
-    from scrapers.hyperliquid_scraper import get_account_info as _fn
+    from scrapers.hyperliquid_scraper import get_hl_account_info as _fn
     return _fn()
 
 @tool
 def get_hl_positions() -> list:
     """Get all open Hyperliquid perpetual positions."""
-    from scrapers.hyperliquid_scraper import get_positions as _fn
+    from scrapers.hyperliquid_scraper import get_hl_positions as _fn
     return _fn()
 
 @tool
 def get_hl_orderbook(symbol: str) -> dict:
     """Get Hyperliquid order book for a symbol (e.g. 'BTC')."""
-    from scrapers.hyperliquid_scraper import get_orderbook as _fn
+    from scrapers.hyperliquid_scraper import get_hl_orderbook as _fn
     return _fn(symbol)
 
 
@@ -134,13 +141,13 @@ def get_aster_balance() -> dict:
 @tool
 def search_polymarket(query: str) -> list:
     """Search Polymarket prediction markets by query."""
-    from scrapers.polymarket_scraper import search_markets as _fn
+    from scrapers.polymarket_scraper import search_polymarket as _fn
     return _fn(query)
 
 @tool
 def get_polymarket_positions() -> list:
     """Get your open Polymarket positions."""
-    from scrapers.polymarket_scraper import get_positions as _fn
+    from scrapers.polymarket_scraper import get_polymarket_positions as _fn
     return _fn()
 
 
