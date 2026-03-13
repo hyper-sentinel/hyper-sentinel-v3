@@ -144,6 +144,7 @@ Replace `sk-ant-...` with your actual Anthropic API key.
 | Provider | Where to get a key |
 |---|---|
 | Claude (Anthropic) | [console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys) |
+| GPT (OpenAI) | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) |
 | Gemini (Google) | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
 | Grok (xAI) | [console.x.ai](https://console.x.ai) |
 | Ollama (local, free) | No key needed — set `LLM_PROVIDER=OLLAMA` |

@@ -62,6 +62,8 @@ BANNER = """
 
 KEY_PREFIXES = {
     "sk-ant-":  ("CLAUDE",  "Anthropic (Claude)",  "🟣"),
+    "sk-proj-": ("OPENAI",  "OpenAI (GPT)",        "🟢"),
+    "sk-":      ("OPENAI",  "OpenAI (GPT)",        "🟢"),
     "AIza":     ("GEMINI",  "Google (Gemini)",     "🔵"),
     "xai-":     ("GROK",    "xAI (Grok)",          "⚫"),
 }
@@ -124,6 +126,7 @@ def first_run_setup():
 
     console.print("  Paste any API key from a supported provider:\n")
     console.print("    [dim]•[/] [bold]Anthropic (Claude)[/]  [dim]→ console.anthropic.com[/]")
+    console.print("    [dim]•[/] [bold]OpenAI (GPT)[/]        [dim]→ platform.openai.com[/]")
     console.print("    [dim]•[/] [bold]Google (Gemini)[/]     [dim]→ aistudio.google.com[/]")
     console.print("    [dim]•[/] [bold]xAI (Grok)[/]          [dim]→ console.x.ai[/]")
     console.print("    [dim]•[/] [bold]Ollama (local)[/]       [dim]→ no key needed, type 'ollama'[/]")
@@ -225,6 +228,9 @@ def _bridge_api_keys():
         "CLAUDE": [
             "ANTHROPIC_API_KEY",
         ],
+        "OPENAI": [
+            "OPENAI_API_KEY",
+        ],
         "GEMINI": [
             "GOOGLE_API_KEY",      # Upsonic uses this
             "GEMINI_API_KEY",      # Agno uses this
@@ -253,7 +259,7 @@ def _validate_model_config():
     provider = os.getenv("LLM_PROVIDER", "CLAUDE").upper()
     api_key = os.getenv("LLM_API_KEY", "").strip()
 
-    VALID_PROVIDERS = {"CLAUDE", "GEMINI", "GROK", "OLLAMA"}
+    VALID_PROVIDERS = {"CLAUDE", "OPENAI", "GEMINI", "GROK", "OLLAMA"}
     if provider not in VALID_PROVIDERS:
         console.print(f"  [red]✗ Unknown LLM_PROVIDER: '{provider}'[/]")
         console.print(f"  [dim]Valid options: {', '.join(sorted(VALID_PROVIDERS))}[/]")
@@ -270,9 +276,15 @@ def _validate_model_config():
         console.print(f"  [yellow]⚠ Gemini key doesn't start with 'AIza' — may not work.[/]")
         console.print(f"  [dim]Get a valid key at: aistudio.google.com[/]\n")
 
+    # OpenAI-specific: validate key prefix
+    if provider == "OPENAI" and not api_key.startswith("sk-"):
+        console.print(f"  [yellow]⚠ OpenAI key doesn't start with 'sk-' — may not work.[/]")
+        console.print(f"  [dim]Get a valid key at: platform.openai.com/api-keys[/]\n")
+
     # Provider → model mapping (for display)
     MODEL_MAP = {
         "CLAUDE": "anthropic/claude-sonnet-4-5",
+        "OPENAI": "openai/gpt-4o",
         "GEMINI": "google/gemini-2.0-flash",
         "GROK": "xai/grok-2",
         "OLLAMA": "ollama/deepseek-r1:1.5b",
@@ -351,7 +363,7 @@ def _print_status(nats_connected=False, decisions_logged=0, mode="solo"):
     # REST API status
     if api_status.get("running"):
         api_port = api_status.get("port", 8000)
-        infra.add_row("🌐 REST API", f"[green]● http://localhost:{api_port}/docs[/]", f"{api_status.get('tools', '?')} tools")
+        infra.add_row("🌐 REST API", f"[green]● Active[/]", f"http://localhost:{api_port}/docs · {api_status.get('tools', '?')} tools")
     elif api_status.get("disabled"):
         infra.add_row("🌐 REST API", "[dim]○ Disabled[/]", "API_ENABLED=false")
     else:

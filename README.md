@@ -11,7 +11,7 @@ Crypto · Equities · Options · Prediction Markets · Macro · Sentiment · Bro
 <p align="center">
 <img src="https://img.shields.io/badge/PYTHON-3.13+-blue?style=for-the-badge&logo=python&logoColor=white" />
 <img src="https://img.shields.io/badge/AI-AUTONOMOUS-blueviolet?style=for-the-badge" />
-<img src="https://img.shields.io/badge/CLAUDE · GEMINI · GROK-LLM-green?style=for-the-badge" />
+<img src="https://img.shields.io/badge/CLAUDE · GPT · GEMINI · GROK-LLM-green?style=for-the-badge" />
 <img src="https://img.shields.io/badge/TOOLS-70+-orange?style=for-the-badge" />
 <img src="https://img.shields.io/badge/REST_API-FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" />
 <img src="https://img.shields.io/badge/LICENSE-PROPRIETARY-red?style=for-the-badge" />
@@ -161,7 +161,7 @@ curl http://localhost:8000/api/v1/tools/place_hl_order \
 | Layer | Technology |
 |-------|-----------|
 | **Agent Frameworks** | Upsonic (Teams, Memory, Safety Engine) + Agno (swarm) |
-| **LLM Providers** | Claude · Gemini · Grok · Ollama (auto-detect from key prefix) |
+| **LLM Providers** | Claude · GPT (OpenAI) · Gemini · Grok · Ollama (auto-detect from key prefix) |
 | **Browser Automation** | Tier 1: Chrome direct · Tier 2: browser-use + Playwright · Tier 3: Computer Use |
 | **Message Fabric** | NATS.io + JetStream |
 | **Trading** | Hyperliquid SDK + Aster DEX + Polymarket CLOB |

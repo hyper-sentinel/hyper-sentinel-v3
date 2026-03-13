@@ -1,6 +1,6 @@
 # 📋 Hyper-Sentinel — Full Capabilities Reference
 
-> **70+ autonomous AI tools** across real-time market surveillance, multi-venue trading, macroeconomic analysis, social sentiment intelligence, quantitative analytics (DuckDB), browser automation, computer control, and 24/7 autonomous operation — powered by multi-LLM architecture with Claude, Gemini, and Grok.
+> **70+ autonomous AI tools** across real-time market surveillance, multi-venue trading, macroeconomic analysis, social sentiment intelligence, quantitative analytics (DuckDB), browser automation, computer control, and 24/7 autonomous operation — powered by multi-LLM architecture with Claude, GPT, Gemini, and Grok.
 
 ---
 
@@ -343,7 +343,7 @@ open http://localhost:8000/docs
 │                   HYPER-SENTINEL RUNTIME                   │
 │                                                              │
 │  ┌─── LLM LAYER ──────────────────────────────────────────┐ │
-│  │  Claude · Gemini · Grok · Ollama (auto-detect)         │ │
+│  │  Claude · GPT · Gemini · Grok · Ollama (auto-detect)  │ │
 │  └────────────────────────────────────────────────────────┘ │
 │                          ↕ tool calls                        │
 │  ┌─── AGENT LAYER ────────────────────────────────────────┐ │

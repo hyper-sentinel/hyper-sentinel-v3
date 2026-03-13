@@ -24,6 +24,7 @@ CONSUMER_NAME = "MARKET_AGENT_CONSUMER"
 # ─── LLM Provider Mapping ──────────────────────────────────────
 PROVIDER_MODEL_MAP: dict[str, str] = {
     "CLAUDE": "anthropic/claude-sonnet-4-5",
+    "OPENAI": "openai/gpt-4o",
     "GEMINI": "google/gemini-2.0-flash",
     "GROK": "xai/grok-2",
     "OLLAMA": "ollama/deepseek-r1:1.5b",
@@ -82,6 +83,7 @@ class AgentConfig:
         if self.llm_api_key:
             provider_env_map = {
                 "CLAUDE": "ANTHROPIC_API_KEY",
+                "OPENAI": "OPENAI_API_KEY",
                 "GEMINI": "GOOGLE_API_KEY",
                 "GROK": "XAI_API_KEY",
             }

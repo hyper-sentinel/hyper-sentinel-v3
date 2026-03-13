@@ -24,7 +24,7 @@
 │                    HYPER-SENTINEL RUNTIME                      │
 │                                                                  │
 │   ┌─── LLM LAYER ─────────────────────────────────────────────┐ │
-│   │  Claude · Gemini · Grok · Ollama                          │ │
+│   │  Claude · GPT · Gemini · Grok · Ollama                    │ │
 │   │  Auto-detect from key prefix · Switch mid-session         │ │
 │   └───────────────────────────────────────────────────────────┘ │
 │                           ↕ tool calls                           │
