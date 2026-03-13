@@ -1,5 +1,5 @@
 """
-Sentinel v3 — Upsonic Team (Coordinate Mode)
+Sentinel — Upsonic Team (Coordinate Mode)
 ==============================================
 3 specialized agents with real tools, shared memory, thinking enabled.
 

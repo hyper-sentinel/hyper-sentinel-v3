@@ -16,8 +16,8 @@
 
 ```bash
 # Clone the repo
-git clone https://github.com/hyper-sentinel/hyper-sentinel-v3.git
-cd hyper-sentinel-v3
+git clone https://github.com/hyper-sentinel/hyper-sentinel.git
+cd hyper-sentinel
 
 # Install dependencies
 uv sync

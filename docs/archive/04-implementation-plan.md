@@ -1,4 +1,4 @@
-# Hyper-Sentinel v3: Implementation Plan
+# Hyper-Sentinel: Implementation Plan
 
 ## Vision
 

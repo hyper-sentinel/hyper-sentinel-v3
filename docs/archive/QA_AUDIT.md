@@ -1,4 +1,4 @@
-# 🧪 QA Audit — Hyper-Sentinel v3
+# 🧪 QA Audit — Hyper-Sentinel
 
 **Date:** March 12, 2026  
 **Method:** Automated script testing via direct scraper calls + REST API curl  

@@ -1,5 +1,5 @@
 """
-Sentinel v3 — Upsonic Tool Wrappers
+Sentinel — Upsonic Tool Wrappers
 
 Wraps all v1 scrapers as Upsonic @tool functions so the Team agents
 can call real APIs instead of hallucinating data.

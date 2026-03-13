@@ -19,7 +19,7 @@ The Sentinel API exposes the full power of Hyper-Sentinel as HTTP endpoints. Eve
 ### 1. Start the Server
 
 ```bash
-cd hyper-sentinel-v3
+cd hyper-sentinel
 uv run python api_server.py
 ```
 
@@ -299,7 +299,7 @@ docker run -p 8000:8000 --env-file .env sentinel-api
 
 ```bash
 ./deploy.sh
-# → https://hyper-sentinel-v3-xxxxx.run.app/docs
+# → https://hyper-sentinel-xxxxx.run.app/docs
 ```
 
 ---

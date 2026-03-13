@@ -1,5 +1,5 @@
 """
-Hyper-Sentinel v3 — Interactive Terminal
+Hyper-Sentinel — Interactive Terminal
 ==========================================
 Run with: uv run main.py
 
@@ -51,7 +51,7 @@ BANNER = """
 [bold cyan]██║  ██║   ██║   ██║     ███████╗██║  ██║[/]
 [bold cyan]╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚══════╝╚═╝  ╚═╝[/]
 
-[bold white]S E N T I N E L   v 3[/]
+[bold white]S E N T I N E L   [/]
 [dim]Autonomous AI Agent Swarm · NATS · JetStream · Zero-Trust[/]
 """
 
@@ -111,7 +111,7 @@ def first_run_setup():
     """
     console.print()
     welcome = Text()
-    welcome.append("Welcome to Hyper Sentinel v3!\n", style="bold cyan")
+    welcome.append("Welcome to Hyper Sentinel!\n", style="bold cyan")
     welcome.append("Let's get you set up. This only happens once — your keys are saved to .env automatically.", style="dim")
     console.print(Panel(welcome, border_style="cyan", padding=(1, 3)))
     console.print()

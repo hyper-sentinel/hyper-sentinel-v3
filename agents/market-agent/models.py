@@ -1,5 +1,5 @@
 """
-Hyper-Sentinel v3 — MarketAgent Data Models
+Hyper-Sentinel — MarketAgent Data Models
 ============================================
 Pydantic models for structured data flowing through NATS subjects.
 Every message is typed, validated, and serializable.

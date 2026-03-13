@@ -71,7 +71,7 @@
 
 ---
 
-### 🔴 Gen 6 — `hyper-sentinel-v3` (Mar 2026) ← **Current**
+### 🔴 Gen 6 — `hyper-sentinel` (Mar 2026) ← **Current**
 
 **THE QUANT STANDARD.** Everything from Gens 1–5, plus 3-tier browser automation, multi-LLM support, Docker-isolated shell execution, DuckDB SQL analytics, EODHD institutional data, and comprehensive documentation.
 

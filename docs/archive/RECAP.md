@@ -1,4 +1,4 @@
-# 🛡️ Sentinel v3 — Session Recap (2026-03-11 03:30 EST)
+# 🛡️ Sentinel — Session Recap (2026-03-11 03:30 EST)
 
 ## Status: ALL 3 STEPS COMPLETE ✅
 
@@ -7,7 +7,7 @@
 ## ✅ What Is Finished
 
 ### Step 1: End-to-End Command Testing ✅
-- Forked `hyper-sentinel-v2` → `hyper-sentinel-v3` (clean git, `main` branch)
+- Forked `hyper-sentinel-v2` → `hyper-sentinel` (clean git, `main` branch)
 - Launched app, completed first-run setup
 - `open youtube` — ✅ Opens Chrome with signed-in profile
 - `open tradingview` — ✅ Chrome opens correctly
@@ -67,7 +67,7 @@ eae95c9  Initial fork from hyper-sentinel-v2
 ```
 
 ## Environment
-- **Repo**: `hyper-sentinel-v3` (local, not yet pushed to GitHub)
+- **Repo**: `hyper-sentinel` (local, not yet pushed to GitHub)
 - **Branch**: `main`
 - **Python**: 3.13.12 via `uv`
 - **Venv**: `/tmp/hs-v3-venv` (macOS TCC workaround)
@@ -78,5 +78,5 @@ eae95c9  Initial fork from hyper-sentinel-v2
 ## 🔜 Next Steps (Future Sessions)
 1. **Test `browse` Tier 2** — run `uv sync` to install browser-use, then try `browse check BTC price on tradingview`
 2. **Docker-wrap shell exec** — Add container isolation to `computer_use.py._run_shell()` 
-3. **Push to GitHub** — Create `hyper-sentinel-v3` repo under `hyper-sentinel` org
+3. **Push to GitHub** — Create `hyper-sentinel` repo under `hyper-sentinel` org
 4. **Install Playwright** — `playwright install chromium` for Tier 2 to work

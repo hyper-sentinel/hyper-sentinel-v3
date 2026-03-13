@@ -1,1 +1,1 @@
-# Hyper-Sentinel v3 — MarketAgent Package
+# Hyper-Sentinel — MarketAgent Package

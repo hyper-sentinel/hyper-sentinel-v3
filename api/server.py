@@ -1,5 +1,5 @@
 """
-Sentinel REST API v3 — Auto-generated endpoints from ToolRegistry.
+Sentinel REST API — Auto-generated endpoints from ToolRegistry.
 
 Every tool registered in tools.py becomes a POST endpoint:
     POST /api/v1/tools/{tool_name}  →  execute tool  →  JSON response
@@ -199,7 +199,7 @@ def create_app() -> "FastAPI":
     app = FastAPI(
         title="🛡️ Sentinel API",
         description=(
-            "REST API for Hyper-Sentinel v3 — 45+ crypto trading, intelligence, and analysis tools.\n\n"
+            "REST API for Hyper-Sentinel — 45+ crypto trading, intelligence, and analysis tools.\n\n"
             "**Public tools** (no auth): crypto prices, social sentiment, news, macro data.\n\n"
             "**Auth-required tools** (X-API-Key header): DEX trading, account balances, order management."
         ),
@@ -377,7 +377,7 @@ if __name__ == "__main__":
 
     print(f"""
 ╔═══════════════════════════════════════════════════════╗
-║            🛡️  Sentinel REST API v3  🛡️               ║
+║            🛡️  Sentinel REST API  🛡️               ║
 ╠═══════════════════════════════════════════════════════╣
 ║                                                       ║
 ║   Tools:    {registry.tool_count:<3} registered                         ║

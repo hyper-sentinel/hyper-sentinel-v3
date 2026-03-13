@@ -1,4 +1,4 @@
-# 🏗️ Hyper-Sentinel v3 — Architecture & Trading Setup
+# 🏗️ Hyper-Sentinel — Architecture & Trading Setup
 
 > System design, event-driven architecture, and step-by-step setup for all three trading venues.
 
@@ -21,7 +21,7 @@
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│                    HYPER-SENTINEL v3 RUNTIME                      │
+│                    HYPER-SENTINEL RUNTIME                      │
 │                                                                  │
 │   ┌─── LLM LAYER ─────────────────────────────────────────────┐ │
 │   │  Claude · Gemini · Grok · Ollama                          │ │
@@ -170,7 +170,7 @@ Hyperliquid is a **decentralized perpetual futures exchange** on its own L1 bloc
 
 1. Go to [app.hyperliquid.xyz](https://app.hyperliquid.xyz) → connect MetaMask
 2. Click **More** → **API** → **Generate API Wallet**
-3. Name it `hyper-sentinel-v3`
+3. Name it `hyper-sentinel`
 4. ⚠️ **Copy the private key immediately** — shown only once
 5. Click **Authorize API Wallet** → confirm MetaMask transaction
 
@@ -462,7 +462,7 @@ EODHD_API_KEY=your_eodhd_api_key_here
 ## 📁 Project Structure
 
 ```
-hyper-sentinel-v3/
+hyper-sentinel/
 ├── main.py                  # Interactive REPL + command routing
 ├── sentinel.py              # Autonomous runtime loop
 ├── browser_agent.py         # 3-tier browser automation

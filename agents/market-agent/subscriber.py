@@ -1,5 +1,5 @@
 """
-Hyper-Sentinel v3 — MarketAgent NATS Subscriber
+Hyper-Sentinel — MarketAgent NATS Subscriber
 =================================================
 The main entry point. Subscribes to sentinel.market.data via NATS JetStream,
 dispatches to the Upsonic MarketAgent, publishes results to sentinel.risk.input,

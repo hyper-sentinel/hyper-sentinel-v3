@@ -1,4 +1,4 @@
-<h1 align="center">🛡️ Hyper-Sentinel v3</h1>
+<h1 align="center">🛡️ Hyper-Sentinel</h1>
 
 <p align="center">
 <strong>Autonomous AI Agent Swarm for Financial Surveillance, Trading & Market Intelligence</strong>
@@ -33,7 +33,7 @@ Crypto · Equities · Options · Prediction Markets · Macro · Sentiment · Bro
 
 ## 📦 Overview
 
-Hyper-Sentinel v3 is an **autonomous AI agent swarm** that conducts 24/7 financial surveillance, executes trades across multiple DEXs, runs SQL-native quantitative analysis via DuckDB, and controls your computer through natural language — powered by your choice of LLM provider.
+Hyper-Sentinel is an **autonomous AI agent swarm** that conducts 24/7 financial surveillance, executes trades across multiple DEXs, runs SQL-native quantitative analysis via DuckDB, and controls your computer through natural language — powered by your choice of LLM provider.
 
 > 📋 [**Full Capabilities Reference →**](CAPABILITIES.md) — detailed breakdown of all 70+ tools, agent modes, data sources, and architecture.
 
@@ -83,8 +83,8 @@ brew install --cask docker
 ### Step 3 · Run it
 
 ```bash
-git clone https://github.com/hyper-sentinel/hyper-sentinel-v3.git
-cd hyper-sentinel-v3
+git clone https://github.com/hyper-sentinel/hyper-sentinel.git
+cd hyper-sentinel
 docker compose up -d nats
 uv run main.py
 ```
@@ -204,7 +204,7 @@ Upsonic provides **coordinate mode** — agents share memory, enforce safety pol
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│                   HYPER-SENTINEL v3 RUNTIME                   │
+│                   HYPER-SENTINEL RUNTIME                   │
 │                                                              │
 │  ┌─── MONITORS ──────────────────────────────────────────┐  │
 │  │ Price (15m) · Positions (30m) · Sentiment (60m)       │  │
@@ -296,14 +296,14 @@ Upsonic provides **coordinate mode** — agents share memory, enforce safety pol
 | 3rd | `agentic-hyper-terminal` | Dual-DEX, FRED macro, browser automation |
 | 4th | `agentic-hyper-sentinel` | Autonomous 24/7, monitors, missions, guardrails |
 | 5th | `hyper-sentinel-v2` | NATS pub/sub, Upsonic Teams, @tool scrapers, coordinate mode |
-| **6th** | **`hyper-sentinel-v3`** | **3-tier browser automation, multi-LLM, Docker shell isolation** |
+| **6th** | **`hyper-sentinel`** | **3-tier browser automation, multi-LLM, Docker shell isolation** |
 
 ---
 
 ## 📁 Project Structure
 
 ```
-hyper-sentinel-v3/
+hyper-sentinel/
 ├── main.py                  # Interactive REPL + command routing
 ├── api_server.py            # REST API (FastAPI) — auto-starts on :8000
 ├── sentinel.py              # Autonomous runtime loop

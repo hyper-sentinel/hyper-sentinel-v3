@@ -1,13 +1,13 @@
 # 🔍 Agentic Features Audit — v1 vs v3
 
 **Date:** March 12, 2026  
-**Scope:** agentic-hyper-sentinel (v1) → hyper-sentinel-v3
+**Scope:** agentic-hyper-sentinel (v1) → hyper-sentinel
 
 ---
 
 ## Feature Comparison Matrix
 
-| # | Feature | v1 (agentic-hyper-sentinel) | v3 (hyper-sentinel-v3) | Integration Priority |
+| # | Feature | v1 (agentic-hyper-sentinel) | v3 (hyper-sentinel) | Integration Priority |
 |---|---------|---------------------------|----------------------|---------------------|
 | 1 | **Telegram Client (Telethon)** | ✅ Full: `tg chats`, `tg read`, `tg send`, PepeBoost | ⚠️ File exists, commands not wired | 🔴 HIGH |
 | 2 | **Telegram Bot** | ✅ `telegram_bot.py`, auto-start in sentinel | ⚠️ `add telegram` saves token, no bot handler | 🟡 MEDIUM |
@@ -104,4 +104,4 @@ Wire `telegram_bot.py` to run as daemon thread (like REST API). Enables getting 
 
 ---
 
-*Audit generated from source code analysis of agentic-hyper-sentinel and hyper-sentinel-v3*
+*Audit generated from source code analysis of agentic-hyper-sentinel and hyper-sentinel*

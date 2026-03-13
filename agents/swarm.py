@@ -1,5 +1,5 @@
 """
-Sentinel v3 — Agno Swarm (5-Agent Team)
+Sentinel — Agno Swarm (5-Agent Team)
 =========================================
 5 specialist agents coordinated by Captain in Agno's coordinate mode.
 
@@ -300,7 +300,7 @@ def create_swarm() -> Team:
     ops = _create_ops(model_fn())
 
     team = Team(
-        name="Hyper Sentinel v3 Swarm",
+        name="Hyper Sentinel Swarm",
         mode="coordinate",
         model=model_fn(),
         members=[captain, analyst, trader, risk_mgr, ops],
