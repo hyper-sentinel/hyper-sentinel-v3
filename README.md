@@ -13,6 +13,7 @@ Crypto · Equities · Options · Prediction Markets · Macro · Sentiment · Bro
 <img src="https://img.shields.io/badge/AI-AUTONOMOUS-blueviolet?style=for-the-badge" />
 <img src="https://img.shields.io/badge/CLAUDE · GEMINI · GROK-LLM-green?style=for-the-badge" />
 <img src="https://img.shields.io/badge/TOOLS-70+-orange?style=for-the-badge" />
+<img src="https://img.shields.io/badge/REST_API-FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" />
 <img src="https://img.shields.io/badge/LICENSE-PROPRIETARY-red?style=for-the-badge" />
 </p>
 
@@ -287,47 +288,37 @@ Upsonic provides **coordinate mode** — agents share memory, enforce safety pol
 
 ---
 
-## Generation Lineage
-
-| Gen | Project | Key Upgrade |
-|-----|---------|-------------|
-| 1st | `fintech-terminal` | Single agent, foundation |
-| 2nd | `agentic-fintech-terminal` | 5-agent swarm, 7 MCP servers |
-| 3rd | `agentic-hyper-terminal` | Dual-DEX, FRED macro, browser automation |
-| 4th | `agentic-hyper-sentinel` | Autonomous 24/7, monitors, missions, guardrails |
-| 5th | `hyper-sentinel-v2` | NATS pub/sub, Upsonic Teams, @tool scrapers, coordinate mode |
-| **6th** | **`hyper-sentinel`** | **3-tier browser automation, multi-LLM, Docker shell isolation** |
-
----
-
 ## 📁 Project Structure
 
 ```
 hyper-sentinel/
-├── main.py                  # Interactive REPL + command routing
-├── api_server.py            # REST API (FastAPI) — auto-starts on :8000
-├── sentinel.py              # Autonomous runtime loop
-├── browser_agent.py         # 3-tier browser (Tier 1: Chrome → Tier 2: Playwright → Tier 3: Computer Use)
-├── computer_use.py          # Safe computer control (apps, system info, shell)
-├── tools.py                 # 20 Upsonic @tool wrappers
-├── tool_registry.py         # Unified tool registration
-├── monitors.py              # 4 continuous watchers
-├── missions.py              # Standing orders system
-├── memory.py                # Persistent state (SQLite → Postgres)
-├── scheduler.py             # Cron-style task scheduler
-├── strategy_runner.py       # SMA crossover auto-trading
-├── ta_engine.py             # Technical analysis (pandas-ta)
-├── telegram_client.py       # Telegram Client API (Telethon — sign in as you)
-├── swarm.py                 # Agno 5-agent team
-├── team.py                  # Upsonic Team (coordinate mode)
-├── trading_mcp.py           # MCP trading server
-├── webhook_server.py        # TradingView webhook receiver
-├── agents/
-│   ├── market-agent/        # Upsonic Agent + YFinanceTools
+├── main.py                  # Entry point — REPL + command routing
+├── core/                    # Runtime engine
+│   ├── sentinel.py          # Autonomous 24/7 loop
+│   ├── monitors.py          # 4 watchers (price, position, sentiment, macro)
+│   ├── missions.py          # Standing orders system
+│   ├── tools.py             # 70+ Upsonic @tool wrappers
+│   ├── tool_registry.py     # Unified registration + schema generation
+│   ├── ta_engine.py         # Technical analysis (SMA, RSI, MACD, Bollinger)
+│   ├── strategy_runner.py   # SMA crossover auto-trading
+│   ├── memory.py            # Persistent state
+│   └── scheduler.py         # Cron-style task scheduler
+├── api/                     # HTTP layer
+│   ├── server.py            # REST API (FastAPI) — auto-starts on :8000
+│   ├── webhook.py           # TradingView webhook receiver
+│   └── trading_mcp.py       # MCP trading server
+├── automation/              # Computer + browser control
+│   ├── browser.py           # 3-tier (Chrome → Playwright → Computer Use)
+│   ├── computer.py          # macOS native control
+│   └── telegram.py          # Telegram Client API
+├── agents/                  # Multi-agent orchestration
+│   ├── market-agent/        # Upsonic solo agent
+│   ├── swarm.py             # Agno 5-agent team
+│   ├── team.py              # Upsonic coordinate mode
 │   ├── analyst.py           # Research specialist
 │   ├── trader.py            # Execution specialist
 │   └── risk_manager.py      # Risk specialist
-├── scrapers/                # 8 data modules
+├── scrapers/                # 8 data connectors
 │   ├── crypto_scraper.py    # CoinGecko
 │   ├── fred_scraper.py      # FRED macro
 │   ├── y2_scraper.py        # Y2 Intelligence
@@ -336,11 +327,10 @@ hyper-sentinel/
 │   ├── hyperliquid_scraper.py
 │   ├── aster_scraper.py
 │   └── polymarket_scraper.py
-├── infrastructure/
-│   └── nats/                # NATS server config
-├── docs/                    # Architecture + setup docs
-├── CAPABILITIES.md          # Full 70+ tool reference
-├── docker-compose.yml
+├── docker/                  # Container config
+│   ├── docker-compose.yml
+│   └── nats-server.conf
+├── docs/                    # Reference documentation
 └── pyproject.toml
 ```
 
@@ -352,4 +342,4 @@ Copyright © 2026 Morgan Fisher. All rights reserved. Viewing only — see [LICE
 
 ---
 
-<p align="center"><strong>Built by the <a href="https://github.com/hyper-sentinel">Hyper Sentinel</a> team · 6th Generation · March 2026</strong></p>
+<p align="center"><strong>Built by <a href="https://github.com/hyper-sentinel">Hyper Sentinel</a> · March 2026</strong></p>
