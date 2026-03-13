@@ -46,20 +46,21 @@ Hyper-Sentinel is an **autonomous AI agent swarm** that conducts 24/7 financial 
 
 ## 🚀 Getting Started
 
-### Prerequisites
+### Step 1 · First-time setup
 
-- [**uv**](https://docs.astral.sh/uv/getting-started/installation/) — Python package manager
-- [**Docker**](https://www.docker.com/products/docker-desktop/) — for NATS messaging
+Install [**uv**](https://docs.astral.sh/uv/getting-started/installation/) and [**Docker Desktop**](https://www.docker.com/products/docker-desktop/):
 
-### Run it
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+### Step 2 · Run it
 
 ```bash
 git clone https://github.com/hyper-sentinel/hyper-sentinel.git && cd hyper-sentinel && docker compose up -d nats && uv run main.py
 ```
 
-**That's it.** One line boots the REPL, REST API, and NATS. On first run you'll paste an AI provider key and you're live.
-
-Type `sentinel` to start the 24/7 autonomous monitoring loop.
+On first run, the interactive setup walks you through configuration — paste any supported AI provider key and you're live. All keys are auto-saved to `.env`. Type `sentinel` to start the 24/7 autonomous monitoring loop.
 
 ---
 
