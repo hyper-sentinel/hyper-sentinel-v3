@@ -48,16 +48,26 @@ Hyper-Sentinel is an **autonomous AI agent swarm** that conducts 24/7 financial 
 
 ### Step 1 · Install `uv`
 
+**macOS / Linux:**
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
+**Windows (PowerShell):**
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
 ### Step 2 · Install Docker
 
-Download [Docker Desktop](https://www.docker.com/products/docker-desktop/) or:
+Download [Docker Desktop](https://www.docker.com/products/docker-desktop/) (macOS, Windows, Linux) or:
 
 ```bash
+# macOS
 brew install --cask docker
+
+# Windows
+winget install Docker.DockerDesktop
 ```
 
 ### Step 3 · Clone & run
