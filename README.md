@@ -46,59 +46,20 @@ Hyper-Sentinel is an **autonomous AI agent swarm** that conducts 24/7 financial 
 
 ## 🚀 Getting Started
 
-### Step 1 · Install `uv`
+### Prerequisites
 
-**macOS / Linux:**
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
+- [**uv**](https://docs.astral.sh/uv/getting-started/installation/) — Python package manager
+- [**Docker**](https://www.docker.com/products/docker-desktop/) — for NATS messaging
 
-**Windows (PowerShell):**
-```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
-
-### Step 2 · Install Docker
-
-Download [Docker Desktop](https://www.docker.com/products/docker-desktop/) (macOS, Windows, Linux) or:
+### Run it
 
 ```bash
-# macOS
-brew install --cask docker
-
-# Windows
-winget install Docker.DockerDesktop
+git clone https://github.com/hyper-sentinel/hyper-sentinel.git && cd hyper-sentinel && docker compose up -d nats && uv run main.py
 ```
 
-### Step 3 · Clone & run
+**That's it.** One line boots the REPL, REST API, and NATS. On first run you'll paste an AI provider key and you're live.
 
-```bash
-git clone https://github.com/hyper-sentinel/hyper-sentinel.git
-cd hyper-sentinel
-```
-
-### Step 4 · One command
-
-```bash
-docker compose up -d nats && uv run main.py
-```
-
-**That's it.** One line boots everything:
-- 🖥️ **Interactive REPL** — chat with the AI agent
-- 🌐 **REST API** — auto-starts on `http://localhost:8000/docs` (49 tools)
-- 📡 **NATS messaging** — pub/sub event fabric
-
-On first run, the interactive setup walks you through configuration — paste any supported AI provider key and you're live. All keys are auto-saved to `.env`.
-
-### Step 5 · Go autonomous
-
-Once the REPL is running, type `sentinel` to start the 24/7 monitoring loop:
-
-```
-⚡ You → sentinel
-```
-
-This activates 4 monitors (price, positions, sentiment, macro) that run on intervals, detect threshold breaches, and trigger the agent team to analyze and act.
+Type `sentinel` to start the 24/7 autonomous monitoring loop.
 
 ---
 
