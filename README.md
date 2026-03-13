@@ -70,6 +70,33 @@ On first run, the interactive setup walks you through configuration — paste an
 
 ---
 
+<details>
+<summary><strong>🖥️ Windows (PowerShell)</strong></summary>
+
+#### Step 1 · First-time setup
+
+Install [**uv**](https://docs.astral.sh/uv/getting-started/installation/):
+
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+Install [**Docker Desktop**](https://www.docker.com/products/docker-desktop/) — download and run the installer, or:
+
+```powershell
+winget install Docker.DockerDesktop
+```
+
+#### Step 2 · Run it
+
+```powershell
+git clone https://github.com/hyper-sentinel/hyper-sentinel.git; cd hyper-sentinel; docker compose up -d nats; uv run main.py
+```
+
+</details>
+
+---
+
 ## ⚡ Capabilities
 
 | Domain | Tools | Source |
