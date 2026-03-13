@@ -58,9 +58,9 @@ class Guardrails:
     """Hard limits on autonomous execution."""
 
     def __init__(self):
-        self.max_trade_usd = float(os.getenv("SENTINEL_MAX_TRADE_USD", "100"))
+        self.max_trade_usd = float(os.getenv("SENTINEL_MAX_TRADE_USD", "500"))
         self.max_daily_trades = int(os.getenv("SENTINEL_MAX_DAILY_TRADES", "5"))
-        self.max_daily_loss_usd = float(os.getenv("SENTINEL_MAX_DAILY_LOSS", "250"))
+        self.max_daily_loss_usd = float(os.getenv("SENTINEL_MAX_DAILY_LOSS", "1000"))
         self.auto_execute_enabled = os.getenv("SENTINEL_AUTO_EXECUTE", "false").lower() == "true"
         self.kill_switch = False
 
@@ -463,6 +463,44 @@ class Sentinel:
             self.strategy_runner = None
             console.print(f"  Strategy: [dim]unavailable ({e})[/]")
 
+        # ── 8. Webhook Server (TradingView) ──
+        try:
+            from webhook_server import WebhookServer
+            self.webhook = WebhookServer(
+                guardrails=self.guardrails,
+                notifier=self.notifier,
+                strategy_runner=getattr(self, "strategy_runner", None),
+            )
+            if self.webhook.start():
+                console.print(f"  Webhook: [green]● http://0.0.0.0:{self.webhook.port}[/] (TradingView alerts)")
+            else:
+                console.print("  Webhook: [dim]disabled (WEBHOOK_ENABLED=false)[/]")
+        except Exception as e:
+            self.webhook = None
+            console.print(f"  Webhook: [dim]unavailable ({e})[/]")
+
+        # ── 9. REST API Server (Swagger dashboard) ──
+        self.api_server = None
+        api_enabled = os.getenv("API_ENABLED", "true").lower() == "true"
+        if api_enabled:
+            try:
+                from api_server import create_app
+                import uvicorn
+                api_port = int(os.getenv("API_PORT", "8000"))
+                app = create_app()
+
+                def _run_api():
+                    uvicorn.run(app, host="0.0.0.0", port=api_port, log_level="warning")
+
+                self._api_thread = threading.Thread(target=_run_api, daemon=True)
+                self._api_thread.start()
+                self.api_server = {"port": api_port}
+                console.print(f"  REST API: [green]● http://localhost:{api_port}/docs[/] (Swagger dashboard)")
+            except Exception as e:
+                console.print(f"  REST API: [dim]unavailable ({e})[/]")
+        else:
+            console.print("  REST API: [dim]disabled (API_ENABLED=false)[/]")
+
         self._print_status()
         return True
 
@@ -483,6 +521,14 @@ class Sentinel:
         status.add_row("Framework", "Upsonic Team (coordinate)")
         status.add_row("Memory", self.memory.get_stats()["backend"] if self.memory else "none")
         status.add_row("Active Missions", str(len(self.missions.get_active_missions())) if self.missions else "0")
+        if hasattr(self, "webhook") and self.webhook and self.webhook.enabled:
+            status.add_row("Webhook", f"[green]● :{self.webhook.port}[/] ({self.webhook.webhook_count} received)")
+        else:
+            status.add_row("Webhook", "[dim]disabled[/]")
+        if hasattr(self, "api_server") and self.api_server:
+            status.add_row("REST API", f"[green]● http://localhost:{self.api_server['port']}/docs[/]")
+        else:
+            status.add_row("REST API", "[dim]disabled[/]")
 
         console.print(Panel(status, title="🛡️ Sentinel Dashboard", border_style="cyan"))
 

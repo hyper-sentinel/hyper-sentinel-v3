@@ -578,7 +578,7 @@ def _start_api_server():
         return
 
     try:
-        from api_server import create_app, registry, API_PORT, API_HOST
+        from api.server import create_app, registry, API_PORT, API_HOST
         import uvicorn
 
         app = create_app()
@@ -963,7 +963,7 @@ def _chat_swarm(user_input: str):
     with console.status("[cyan]Swarm processing...[/]"):
         try:
             if swarm_instance is None:
-                from swarm import SwarmAgent
+                from agents.swarm import SwarmAgent
                 swarm_instance = SwarmAgent()
             response = swarm_instance.chat(user_input)
             console.print(f"  [bold cyan]🛡️  Swarm →[/] {response}\n")
@@ -979,9 +979,9 @@ def _chat_team(user_input: str):
     with console.status("[cyan]Team processing...[/]"):
         try:
             if team_instance is None:
-                from team import build_team
+                from agents.team import build_team
                 team_instance = build_team()
-            from team import team_chat
+            from agents.team import team_chat
             response = team_chat(team_instance, user_input)
             console.print(f"  [bold green]🛡️  Team →[/] {response}\n")
         except Exception as e:
@@ -997,7 +997,7 @@ def _start_sentinel():
         return
 
     def _run():
-        from sentinel import Sentinel
+        from core.sentinel import Sentinel
         sentinel_instance = Sentinel()
         sentinel_instance.run()
 
@@ -1022,7 +1022,7 @@ def _stop_sentinel():
 
 def _show_guardrails():
     """Show current guardrail status."""
-    from sentinel import Guardrails
+    from core.sentinel import Guardrails
     g = Guardrails()
     status = g.status()
 
@@ -1049,7 +1049,7 @@ def _handle_mission(cmd_parts: list[str]):
     subcmd = cmd_parts[1]
 
     try:
-        from missions import MissionController
+        from core.missions import MissionController
         mc = MissionController()
     except Exception as e:
         console.print(f"  [red]Mission system unavailable: {e}[/]\n")
@@ -1249,7 +1249,7 @@ def main():
         # ── Browser commands: Tier 1 (open X) vs Tier 2 (browse <task>) ──
         # Tier 1: "open youtube", "go to tradingview" → instant Chrome open
         if cmd.startswith(("open ", "go to ", "launch ", "navigate to ")):
-            from browser_agent import is_browser_command, open_in_browser
+            from automation.browser import is_browser_command, open_in_browser
             if is_browser_command(user_input):
                 console.print(f"\n  [cyan]🌐 Opening in Chrome...[/]")
                 result = open_in_browser(user_input)
@@ -1269,7 +1269,7 @@ def main():
             console.print(f"\n  [cyan]🤖 Browser agent working on: {task}[/]")
             console.print(f"  [dim]Using Tier 2 (LLM + Playwright) — this may take a moment...[/]")
             try:
-                from browser_agent import get_browser_agent
+                from automation.browser import get_browser_agent
                 agent = get_browser_agent(prefer_computer_use=False)
                 result = agent.browse_sync(task)
                 console.print(f"\n  [bold cyan]🌐 Browser →[/] {result}\n")
@@ -1297,7 +1297,7 @@ def main():
             console.print()
             console.print("  [bold magenta]🐝 Activating Agno swarm...[/]")
             try:
-                from swarm import SwarmAgent
+                from agents.swarm import SwarmAgent
                 with console.status("[magenta]Initializing 5-agent Agno team...[/]"):
                     swarm_instance = SwarmAgent()
                 current_mode = "swarm"
@@ -1313,7 +1313,7 @@ def main():
             console.print()
             console.print("  [bold green]🧠 Activating Upsonic Team...[/]")
             try:
-                from team import build_team
+                from agents.team import build_team
                 with console.status("[green]Building Upsonic Team (coordinate mode)...[/]"):
                     team_instance = build_team()
                 current_mode = "team"

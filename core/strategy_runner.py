@@ -19,7 +19,7 @@ import json
 import logging
 from datetime import datetime
 
-from ta_engine import compute_sma, detect_crossover, compute_indicators
+from core.ta_engine import compute_sma, detect_crossover, compute_indicators
 from scrapers.aster_scraper import aster_ticker, aster_place_order, aster_positions
 
 logger = logging.getLogger("sentinel.strategy")

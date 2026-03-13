@@ -214,10 +214,10 @@ def get_aster_funding_rate(symbol: str = "BTCUSDT") -> dict:
     return _fn(symbol)
 
 @tool
-def place_aster_order(symbol: str, side: str, quantity: float, order_type: str = "MARKET", price: float = 0) -> dict:
-    """Place an Aster DEX futures order. side='BUY'|'SELL'. ⚠️ REAL TRADING."""
+def place_aster_order(symbol: str, side: str, quantity: float = 0, order_type: str = "MARKET", price: float = 0, usd_amount: float = 0) -> dict:
+    """Place an Aster DEX futures order. side='BUY'|'SELL'. Use usd_amount for dollar-sized orders (e.g. 110 = $110 worth of margin), or quantity for raw contract size (e.g. 0.001 BTC). ⚠️ REAL TRADING."""
     from scrapers.aster_scraper import aster_place_order as _fn
-    return _fn(symbol=symbol, side=side, quantity=quantity, order_type=order_type, price=price)
+    return _fn(symbol=symbol, side=side, quantity=quantity, order_type=order_type, price=price if price else None, usd_amount=usd_amount if usd_amount else None)
 
 @tool
 def cancel_aster_order(symbol: str, order_id: str) -> dict:

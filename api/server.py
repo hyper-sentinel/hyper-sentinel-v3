@@ -35,7 +35,7 @@ except ImportError:
     HAS_FASTAPI = False
 
 # Import tool registry + raw scraper functions (bypasses Upsonic @tool decorators)
-from tool_registry import ToolRegistry
+from core.tool_registry import ToolRegistry
 
 from scrapers.crypto_scraper import get_crypto_price, get_crypto_top_n, search_crypto
 from scrapers.fred_scraper import get_fred_series, search_fred, get_economic_dashboard

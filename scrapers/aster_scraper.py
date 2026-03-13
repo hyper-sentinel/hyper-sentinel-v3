@@ -221,14 +221,28 @@ def _get_symbol_info(symbol: str) -> dict | None:
     return _exchange_info_cache.get(symbol)
 
 
+def _get_leverage(symbol: str) -> int:
+    """Get current leverage for a symbol from account position info."""
+    try:
+        positions = _signed_request("GET", "/fapi/v1/positionRisk", {"symbol": symbol})
+        if isinstance(positions, list):
+            for p in positions:
+                if p.get("symbol") == symbol:
+                    return int(p.get("leverage", 1))
+    except Exception:
+        pass
+    return 1
+
+
 def _calc_quantity(symbol: str, usd_amount: float) -> float | None:
-    """Convert USD amount to contract quantity using current price and exchange rules.
-    
+    """Convert USD margin amount to contract quantity using current price, leverage, and exchange rules.
+
+    usd_amount is treated as MARGIN — multiplied by leverage to get notional.
     Handles stepSize/minQty/minNotional from exchange info.
     Returns None if the amount is too small.
     """
     norm = _norm_symbol(symbol)
-    
+
     # Get current price
     try:
         ticker = _public_request("/fapi/v1/ticker/price", {"symbol": norm})
@@ -239,9 +253,14 @@ def _calc_quantity(symbol: str, usd_amount: float) -> float | None:
             return None
     except Exception:
         return None
-    
-    # Raw quantity
-    raw_qty = usd_amount / price
+
+    # Get leverage to convert margin → notional
+    leverage = _get_leverage(norm)
+    notional = usd_amount * leverage
+    logger.info(f"_calc_quantity: ${usd_amount} margin × {leverage}x = ${notional} notional / ${price} = {notional / price:.6f} {norm}")
+
+    # Raw quantity from notional
+    raw_qty = notional / price
     
     # Get exchange rules
     info = _get_symbol_info(norm)
@@ -268,8 +287,38 @@ def _calc_quantity(symbol: str, usd_amount: float) -> float | None:
     
     if qty < min_qty:
         return None
-    
+
     return qty
+
+
+def _is_usd_amount(quantity: float, symbol: str) -> bool:
+    """Determine if a quantity value is likely a USD amount rather than contract size.
+
+    Uses current price to decide. If quantity * price would be absurdly large,
+    it's almost certainly a USD amount, not a contract size.
+    """
+    norm = _norm_symbol(symbol)
+    try:
+        ticker = _public_request("/fapi/v1/ticker/price", {"symbol": norm})
+        if isinstance(ticker, dict) and ticker.get("error"):
+            return False
+        price = float(ticker.get("price", 0))
+        if price <= 0:
+            return False
+    except Exception:
+        return False
+
+    notional = quantity * price
+
+    # If the notional value of treating quantity as contracts would be absurdly large,
+    # it's almost certainly a USD amount. Also: if quantity >= 5 and the asset
+    # price > $100, likely USD (nobody passes 110 BTC as contract size).
+    if price > 100 and quantity >= 5:
+        return True
+    if notional > 50_000:
+        return True
+
+    return False
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -560,17 +609,23 @@ def aster_place_order(
     stop_price: Optional[float] = None,
     time_in_force: str = "GTC",
     reduce_only: bool = False,
+    usd_amount: Optional[float] = None,
 ) -> Any:
     """Place an order on Aster futures.
-    
-    If quantity looks like a USD amount (e.g., 50 for BTC), it will be
-    auto-converted to the correct contract size using current price.
+
+    Two ways to specify size:
+    - usd_amount: Dollar amount to trade (e.g., 110 = $110 worth). Auto-converts to contracts.
+    - quantity: Raw contract quantity (e.g., 0.001 BTC). Used as-is.
+
+    If only quantity is given and it looks like a USD amount (e.g., 110 for BTC),
+    it will be auto-converted using current price.
     """
     # ── Guardrail check (if sentinel guardrails are available) ──
+    trade_usd = usd_amount if usd_amount is not None else quantity
     try:
         from sentinel import _active_guardrails
         if _active_guardrails:
-            can_exec, reason = _active_guardrails.can_execute(trade_usd=quantity)
+            can_exec, reason = _active_guardrails.can_execute(trade_usd=trade_usd)
             if not can_exec:
                 return {
                     "error": True,
@@ -580,29 +635,41 @@ def aster_place_order(
                 }
     except ImportError:
         pass  # Not running in sentinel mode — no guardrails
+
     s = _norm_symbol(symbol)
-    
-    # Smart quantity: if quantity > price-like threshold, treat as USD
-    # e.g., for BTC at $67k, qty=50 means $50 worth, qty=0.001 means 0.001 BTC
-    actual_qty = quantity
-    info = _get_symbol_info(s)
-    if info:
-        max_qty = 1000  # sensible default
-        for f in info.get("filters", []):
-            if f["filterType"] == "MARKET_LOT_SIZE":
-                max_qty = float(f["maxQty"])
-        
-        # If quantity exceeds max market lot size, it's probably USD
-        if quantity > max_qty:
-            calc = _calc_quantity(s, quantity)
-            if calc is None:
-                return {
-                    "error": True,
-                    "message": f"Amount ${quantity} is below minimum notional for {s}",
-                    "hint": "Minimum order is $5 on most pairs",
-                }
-            actual_qty = calc
-    
+
+    # Determine actual contract quantity
+    if usd_amount is not None and usd_amount > 0:
+        # Explicit USD amount — always convert
+        calc = _calc_quantity(s, usd_amount)
+        if calc is None:
+            return {
+                "error": True,
+                "message": f"Amount ${usd_amount} is below minimum notional for {s}",
+                "hint": "Minimum order is typically $5 on most pairs",
+            }
+        actual_qty = calc
+    elif quantity > 0 and _is_usd_amount(quantity, s):
+        # quantity looks like USD (e.g., 110 for BTC at $69k = $7.6M notional)
+        calc = _calc_quantity(s, quantity)
+        if calc is None:
+            return {
+                "error": True,
+                "message": f"Amount ${quantity} is below minimum notional for {s}",
+                "hint": "Minimum order is typically $5 on most pairs",
+            }
+        actual_qty = calc
+        logger.info(f"Auto-converted ${quantity} USD -> {actual_qty} {s} contracts")
+    else:
+        actual_qty = quantity
+
+    if actual_qty <= 0:
+        return {
+            "error": True,
+            "message": "Quantity must be positive",
+            "hint": "Specify quantity (contract size) or usd_amount (dollar value)",
+        }
+
     params: dict[str, Any] = {
         "symbol": s,
         "side": side.upper(),
@@ -617,7 +684,7 @@ def aster_place_order(
         params["price"] = str(price)
     if stop_price is not None:
         params["stopPrice"] = str(stop_price)
-    
+
     return _signed_request("POST", "/fapi/v1/order", params)
 
 
@@ -771,29 +838,32 @@ def aster_place_trailing_stop(
     quantity: float = 0,
     callback_rate: float = 1.0,
     activation_price: Optional[float] = None,
+    usd_amount: Optional[float] = None,
 ) -> Any:
     """Place a trailing stop market order on Aster futures.
 
     Args:
         symbol: Trading pair (e.g., 'BTC')
         side: SELL for long positions, BUY for short positions
-        quantity: Contract size (or USD amount for auto-conversion)
+        quantity: Contract size (or auto-detected USD amount)
         callback_rate: Trail distance as percentage (e.g., 1.0 = 1% trail)
         activation_price: Optional price at which trailing starts
+        usd_amount: Explicit USD amount for auto-conversion
     """
     s = _norm_symbol(symbol)
-    actual_qty = quantity
-    info = _get_symbol_info(s)
-    if info:
-        max_qty = 1000
-        for f in info.get("filters", []):
-            if f["filterType"] == "MARKET_LOT_SIZE":
-                max_qty = float(f["maxQty"])
-        if quantity > max_qty:
-            calc = _calc_quantity(s, quantity)
-            if calc is None:
-                return {"error": True, "message": f"Amount ${quantity} below minimum for {s}"}
-            actual_qty = calc
+
+    if usd_amount is not None and usd_amount > 0:
+        calc = _calc_quantity(s, usd_amount)
+        if calc is None:
+            return {"error": True, "message": f"Amount ${usd_amount} below minimum for {s}"}
+        actual_qty = calc
+    elif quantity > 0 and _is_usd_amount(quantity, s):
+        calc = _calc_quantity(s, quantity)
+        if calc is None:
+            return {"error": True, "message": f"Amount ${quantity} below minimum for {s}"}
+        actual_qty = calc
+    else:
+        actual_qty = quantity
 
     params: dict[str, Any] = {
         "symbol": s,

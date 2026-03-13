@@ -40,7 +40,7 @@ except ImportError:
     HAS_FASTAPI = False
     logger.warning("FastAPI not installed — webhook server unavailable. Run: pip install fastapi uvicorn")
 
-from scrapers.aster_scraper import aster_place_order, aster_ticker
+from scrapers.aster_scraper import aster_place_order
 
 
 class WebhookServer:
@@ -147,23 +147,13 @@ class WebhookServer:
                 # Close all positions on this symbol
                 result = self._close_position(symbol)
             else:
-                # Get current price to calculate quantity
-                ticker = aster_ticker(symbol)
-                if isinstance(ticker, dict) and ticker.get("error"):
-                    return {"status": "error", "detail": ticker["error"]}
-
-                price = float(ticker.get("lastPrice", 0))
-                if price <= 0:
-                    return {"status": "error", "detail": "Could not get price"}
-
-                quantity = size_usd / price
                 side = "BUY" if action == "buy" else "SELL"
 
                 result = aster_place_order(
                     symbol=symbol,
                     side=side,
                     order_type="MARKET",
-                    quantity=quantity,
+                    usd_amount=size_usd,
                 )
 
             # Record
