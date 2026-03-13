@@ -30,7 +30,7 @@ from agno.team import Team
 from scrapers.crypto_scraper import get_crypto_price, get_crypto_top_n, search_crypto
 from scrapers.fred_scraper import get_fred_series, get_economic_dashboard
 from scrapers.y2_scraper import get_news_sentiment, get_news_recap
-from scrapers.elfa_scraper import get_trending_tokens, get_social_mentions
+from scrapers.elfa_scraper import get_trending_tokens, search_mentions
 from scrapers.x_scraper import XScraper
 
 from scrapers.hyperliquid_scraper import (
@@ -163,7 +163,7 @@ def _create_analyst(model) -> Agent:
             # Y2 News
             get_news_sentiment, get_news_recap,
             # Elfa AI social
-            get_trending_tokens, get_social_mentions,
+            get_trending_tokens, search_mentions,
             # X/Twitter
             _search_tweets, _get_trending_topics,
         ],

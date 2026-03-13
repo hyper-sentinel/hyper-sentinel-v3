@@ -44,7 +44,7 @@ def _resolve_model() -> str:
 
 def _get_tools():
     """Import tool groups. Lazy to avoid circular imports."""
-    from tools import CRYPTO_TOOLS, MACRO_TOOLS, SENTIMENT_TOOLS, TRADING_TOOLS, ALL_TOOLS
+    from core.tools import CRYPTO_TOOLS, MACRO_TOOLS, SENTIMENT_TOOLS, TRADING_TOOLS, ALL_TOOLS
     return {
         "crypto": CRYPTO_TOOLS,
         "macro": MACRO_TOOLS,
@@ -187,7 +187,7 @@ def team_chat(team: Team, message: str) -> str:
     Send a message to the team and get a response.
     The leader agent routes to the best specialist(s).
     """
-    from tools import ALL_TOOLS
+    from core.tools import ALL_TOOLS
     task = Task(description=message, tools=ALL_TOOLS)
     result = team.do([task])
     return str(result) if result else "No response."

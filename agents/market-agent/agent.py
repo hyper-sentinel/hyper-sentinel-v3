@@ -222,7 +222,7 @@ def analyze_market_chat(user_input: str) -> str:
 
     # Import ALL scraper tools so the solo agent has full capability
     try:
-        from tools import ALL_TOOLS
+        from core.tools import ALL_TOOLS
         scraper_tools = ALL_TOOLS
     except ImportError:
         scraper_tools = []

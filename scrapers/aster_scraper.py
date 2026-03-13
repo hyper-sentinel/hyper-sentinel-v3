@@ -623,7 +623,7 @@ def aster_place_order(
     # ── Guardrail check (if sentinel guardrails are available) ──
     trade_usd = usd_amount if usd_amount is not None else quantity
     try:
-        from sentinel import _active_guardrails
+        from core.sentinel import _active_guardrails
         if _active_guardrails:
             can_exec, reason = _active_guardrails.can_execute(trade_usd=trade_usd)
             if not can_exec:
