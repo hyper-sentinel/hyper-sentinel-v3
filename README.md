@@ -43,27 +43,6 @@ Hyper-Sentinel is an **autonomous AI agent swarm** that conducts 24/7 financial 
 
 ---
 
-## ⚡ Capabilities
-
-| Domain | Tools | Source |
-|--------|-------|--------|
-| **Crypto** | `get_crypto_price` · `get_crypto_top_n` · `search_crypto` | CoinGecko |
-| **Equities** | `get_stock_quote` · `get_stock_history` · `get_stock_info` | Yahoo Finance |
-| **Macro** | `get_gdp` · `get_cpi` · `get_interest_rates` · `get_vix` · `get_yield_curve` | FRED |
-| **News & Intel** | `get_y2_news` · `get_y2_recap` · `get_y2_report` | Y2 / GloriaAI |
-| **Social Sentiment** | `get_trending_tokens` · `get_token_mentions` · `search_x_posts` | Elfa AI · X |
-| **Trading (HL)** | `get_hl_account` · `place_hl_order` · `get_hl_positions` + 4 more | Hyperliquid |
-| **Trading (Aster)** | `get_aster_account` · `place_aster_order` · `get_aster_klines` + 4 more | Aster DEX |
-| **Prediction Mkts** | `get_polymarket_markets` · `place_poly_order` + 2 more | Polymarket |
-| **Technical Analysis** | `compute_sma` · `compute_rsi` · `compute_macd` · `compute_bollinger` | Built-in |
-| **Quant Analytics** | `daily_returns` · `bollinger_bands` · `rolling_volatility` · `max_drawdown` + 6 more | DuckDB SQL |
-| **EODHD Data** | `get_eod_history` · `get_eod_fundamentals` · `get_eod_intraday` | EODHD |
-| **Browser (3-Tier)** | `open_in_browser` · `browse_task` · `computer_use_task` | Chrome · Playwright · Anthropic |
-| **Computer Control** | `launch_app` · `run_shell` · `screenshot` · `type_text` + 2 more | macOS native |
-| **Guardrails** | `check_trade_limit` · `kill_switch` · `guardrails_status` + 2 more | Built-in |
-
----
-
 ## 🚀 Getting Started
 
 ### Step 1 · Install `uv`
@@ -105,6 +84,27 @@ Once the REPL is running, type `sentinel` to start the 24/7 monitoring loop:
 ```
 
 This activates 4 monitors (price, positions, sentiment, macro) that run on intervals, detect threshold breaches, and trigger the agent team to analyze and act.
+
+---
+
+## ⚡ Capabilities
+
+| Domain | Tools | Source |
+|--------|-------|--------|
+| **Crypto** | `get_crypto_price` · `get_crypto_top_n` · `search_crypto` | CoinGecko |
+| **Equities** | `get_stock_quote` · `get_stock_history` · `get_stock_info` | Yahoo Finance |
+| **Macro** | `get_gdp` · `get_cpi` · `get_interest_rates` · `get_vix` · `get_yield_curve` | FRED |
+| **News & Intel** | `get_y2_news` · `get_y2_recap` · `get_y2_report` | Y2 / GloriaAI |
+| **Social Sentiment** | `get_trending_tokens` · `get_token_mentions` · `search_x_posts` | Elfa AI · X |
+| **Trading (HL)** | `get_hl_account` · `place_hl_order` · `get_hl_positions` + 4 more | Hyperliquid |
+| **Trading (Aster)** | `get_aster_account` · `place_aster_order` · `get_aster_klines` + 4 more | Aster DEX |
+| **Prediction Mkts** | `get_polymarket_markets` · `place_poly_order` + 2 more | Polymarket |
+| **Technical Analysis** | `compute_sma` · `compute_rsi` · `compute_macd` · `compute_bollinger` | Built-in |
+| **Quant Analytics** | `daily_returns` · `bollinger_bands` · `rolling_volatility` · `max_drawdown` + 6 more | DuckDB SQL |
+| **EODHD Data** | `get_eod_history` · `get_eod_fundamentals` · `get_eod_intraday` | EODHD |
+| **Browser (3-Tier)** | `open_in_browser` · `browse_task` · `computer_use_task` | Chrome · Playwright · Anthropic |
+| **Computer Control** | `launch_app` · `run_shell` · `screenshot` · `type_text` + 2 more | macOS native |
+| **Guardrails** | `check_trade_limit` · `kill_switch` · `guardrails_status` + 2 more | Built-in |
 
 ---
 
