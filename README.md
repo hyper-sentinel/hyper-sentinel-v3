@@ -83,19 +83,28 @@ brew install --cask docker
 ### Step 3 · Run it
 
 ```bash
-git clone https://github.com/hyper-sentinel/hyper-sentinel-v3.git && cd hyper-sentinel-v3 && docker compose up -d nats && uv run main.py
+git clone https://github.com/hyper-sentinel/hyper-sentinel-v3.git
+cd hyper-sentinel-v3
+docker compose up -d nats
+uv run main.py
 ```
 
-**That's it.** On first run, the interactive setup walks you through configuration — paste any supported AI provider key and you're live. All keys are auto-saved to `.env`.
+**That's it.** One command boots everything:
+- 🖥️ **Interactive REPL** — chat with the AI agent
+- 🌐 **REST API** — auto-starts on `http://localhost:8000/docs` (49 tools)
+- 📡 **NATS messaging** — pub/sub event fabric
+
+On first run, the interactive setup walks you through configuration — paste any supported AI provider key and you're live. All keys are auto-saved to `.env`.
 
 ### Step 4 · Go autonomous
 
-Once configured, start the autonomous monitoring loop:
+Once the REPL is running, type `sentinel` to start the 24/7 monitoring loop:
 
 ```
 ⚡ You → sentinel
-🛡️ Sentinel autonomous loop started!
 ```
+
+This activates 4 monitors (price, positions, sentiment, macro) that run on intervals, detect threshold breaches, and trigger the agent team to analyze and act.
 
 ---
 
