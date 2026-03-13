@@ -48,9 +48,13 @@ Hyper-Sentinel is an **autonomous AI agent swarm** that conducts 24/7 financial 
 
 ### Step 1 · First-time setup
 
+Install [**uv**](https://docs.astral.sh/uv/getting-started/installation/):
+
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
+
+Install [**Docker**](https://www.docker.com/products/docker-desktop/):
 
 ```bash
 brew install --cask docker
