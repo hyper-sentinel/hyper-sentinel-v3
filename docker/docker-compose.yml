@@ -10,7 +10,7 @@ services:
     container_name: hyper-sentinel-nats
     command: [ "--config", "/etc/nats/nats-server.conf" ]
     volumes:
-      - ./infrastructure/nats/nats-server.conf:/etc/nats/nats-server.conf:ro
+      - ./docker/nats-server.conf:/etc/nats/nats-server.conf:ro
       - nats_data:/data/jetstream
     ports:
       - "4222:4222" # Client connections
