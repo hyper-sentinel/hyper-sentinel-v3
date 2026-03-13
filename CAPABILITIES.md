@@ -223,8 +223,7 @@ Monitor Alert → Team Analysis → Risk Check → Guardrail Validation → Exec
 | **Trail Stop** | Price move | Trailing stop-loss at configurable % |
 | **Scheduled Briefing** | Cron schedule | Morning/evening market briefing |
 | **Sentiment Alert** | Social spike | Alert when token sentiment flips |
-| **DCA** | Cron schedule | Recurring buy at fixed USD amount |
-| **Portfolio Rebalance** | Drift threshold | Auto-rebalance when allocation drifts |
+
 
 ---
 
@@ -358,7 +357,7 @@ open http://localhost:8000/docs
 │  └────────────────────────────────────────────────────────┘ │
 │                          ↕ events                            │
 │  ┌─── AUTONOMOUS LAYER ──────────────────────────────────┐ │
-│  │  4 Monitors · 5 Mission types · Guardrails · Kill SW   │ │
+│  │  4 Monitors · 3 Mission types · Guardrails · Kill SW   │ │
 │  │  Decision logging · Telegram alerts · Memory           │ │
 │  └────────────────────────────────────────────────────────┘ │
 │                          ↕ execution                         │

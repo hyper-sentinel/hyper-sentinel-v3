@@ -101,12 +101,11 @@ Once configured, start the autonomous monitoring loop:
 
 ## 🌐 REST API
 
-Every tool is also available as an HTTP endpoint via the built-in **FastAPI** server with Swagger docs.
+The REST API **starts automatically** when you run `uv run main.py` — no separate terminal needed. All 49+ tools are exposed as HTTP endpoints with Swagger docs.
 
-```bash
-uv run python api_server.py
-# → http://localhost:8000/docs   (Swagger UI)
-# → http://localhost:8000/redoc  (ReDoc)
+```
+📡 Infrastructure
+  🌐 REST API    ● http://localhost:8000/docs    49 tools
 ```
 
 | Feature | Details |
@@ -114,7 +113,10 @@ uv run python api_server.py
 | **Endpoints** | `POST /api/v1/tools/{tool_name}` — one endpoint per tool |
 | **Auth** | `X-API-Key` header for trading tools; public tools (prices, news) require no auth |
 | **Rate Limit** | 60 req/min per key (configurable via `API_RATE_LIMIT`) |
-| **Docs** | Auto-generated Swagger at `/docs` |
+| **Docs** | Auto-generated Swagger at `/docs`, ReDoc at `/redoc` |
+| **SaaS Keys** | `add api` in terminal to configure auth keys |
+| **Disable** | Set `API_ENABLED=false` in `.env` to turn off |
+
 
 **Quick test (no auth needed):**
 ```bash
@@ -240,15 +242,14 @@ Upsonic provides **coordinate mode** — agents share memory, enforce safety pol
 
 ---
 
-## 🎯 5 Mission Templates
+## 🎯 3 Mission Templates
 
 | Mission | Trigger | Example |
 |---------|---------|---------|
 | **Trail Stop** | Price move | "Trail BTC with 3% stop" |
 | **Briefing** | Schedule | "Morning crypto briefing at 8am" |
 | **Alert** | Sentiment | "Alert if SOL sentiment flips negative" |
-| **DCA** | Schedule | "Buy $50 BTC every Monday" |
-| **Rebalance** | Drift | "Rebalance portfolio if >5% drift" |
+
 
 ---
 
@@ -295,6 +296,7 @@ Upsonic provides **coordinate mode** — agents share memory, enforce safety pol
 ```
 hyper-sentinel-v3/
 ├── main.py                  # Interactive REPL + command routing
+├── api_server.py            # REST API (FastAPI) — auto-starts on :8000
 ├── sentinel.py              # Autonomous runtime loop
 ├── browser_agent.py         # 3-tier browser (Tier 1: Chrome → Tier 2: Playwright → Tier 3: Computer Use)
 ├── computer_use.py          # Safe computer control (apps, system info, shell)
@@ -306,7 +308,7 @@ hyper-sentinel-v3/
 ├── scheduler.py             # Cron-style task scheduler
 ├── strategy_runner.py       # SMA crossover auto-trading
 ├── ta_engine.py             # Technical analysis (pandas-ta)
-├── telegram_client.py       # Telegram notifications
+├── telegram_client.py       # Telegram Client API (Telethon — sign in as you)
 ├── swarm.py                 # Agno 5-agent team
 ├── team.py                  # Upsonic Team (coordinate mode)
 ├── trading_mcp.py           # MCP trading server
@@ -328,7 +330,7 @@ hyper-sentinel-v3/
 ├── infrastructure/
 │   └── nats/                # NATS server config
 ├── docs/                    # Architecture + setup docs
-├── CAPABILITIES.md          # Full 57+ tool reference
+├── CAPABILITIES.md          # Full 70+ tool reference
 ├── docker-compose.yml
 └── pyproject.toml
 ```

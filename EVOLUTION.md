@@ -48,7 +48,7 @@
 
 - Autonomous 24/7 monitoring loop
 - 4 monitors: Price (15m), Position (30m), Sentiment (60m), Macro (6h)
-- 5 mission templates (trail stop, DCA, briefing, alerts, rebalance)
+- 3 mission templates (trail stop, briefing, alerts)
 - Trade guardrails ($100 max, 5/day, $250 loss limit, kill switch)
 - SQLite decision logging
 - Telegram notifications

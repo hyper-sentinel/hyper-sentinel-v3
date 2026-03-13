@@ -44,7 +44,7 @@
 │   ┌─── AUTONOMOUS LAYER ─────────────────────────────────────┐ │
 │   │  Monitors: Price (15m) · Position (30m) · Sentiment (60m)│ │
 │   │            Macro (6h) — threshold-based, zero LLM cost   │ │
-│   │  Missions: Trail Stop · Briefing · Alert · DCA · Rebal   │ │
+│   │  Missions: Trail Stop · Briefing · Alert                 │ │
 │   │  Guardrails: $100/trade · 5/day · $250 loss · Kill SW    │ │
 │   └───────────────────────────────────────────────────────────┘ │
 │                           ↕ execution                            │

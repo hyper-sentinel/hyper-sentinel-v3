@@ -348,11 +348,31 @@ def _print_status(nats_connected=False, decisions_logged=0, mode="solo"):
     else:
         infra.add_row("📦 JetStream", "[dim]○ Waiting for NATS[/]", "")
 
+    # REST API status
+    if api_status.get("running"):
+        api_port = api_status.get("port", 8000)
+        infra.add_row("🌐 REST API", f"[green]● http://localhost:{api_port}/docs[/]", f"{api_status.get('tools', '?')} tools")
+    elif api_status.get("disabled"):
+        infra.add_row("🌐 REST API", "[dim]○ Disabled[/]", "API_ENABLED=false")
+    else:
+        infra.add_row("🌐 REST API", "[yellow]○ Not started[/]", "")
+
     console.print()
     console.print(infra)
 
     # ── Data Sources ──
     sources = _check_data_sources()
+
+    # Map service aliases → data source display names for highlighting
+    _SERVICE_TO_SOURCE = {
+        "fred": "FRED", "y2": "Y2 Intelligence", "elfa": "Elfa AI",
+        "x": "X (Twitter)", "twitter": "X (Twitter)",
+        "hl": "Hyperliquid", "hyperliquid": "Hyperliquid",
+        "aster": "Aster DEX", "polymarket": "Polymarket",
+        "telegram": "Telegram", "tradingview": "TradingView", "tv": "TradingView",
+    }
+    highlight_source = _SERVICE_TO_SOURCE.get(_last_configured_service, "") if _last_configured_service else ""
+
     ds = Table(
         title="[bold cyan]📊 Data Sources[/]", title_justify="left",
         show_header=False, box=box.SIMPLE_HEAVY, border_style="cyan",
@@ -363,16 +383,20 @@ def _print_status(nats_connected=False, decisions_logged=0, mode="solo"):
     ds.add_column("Details", style="dim")
 
     for s in sources:
+        is_highlight = (s["name"] == highlight_source)
+        marker = " ✨" if is_highlight else ""
         if s["status"] == "available":
-            ds.add_row(f"{s['icon']} {s['name']}", "[green]● Always available[/]", s["desc"])
+            ds.add_row(f"{s['icon']} {s['name']}{marker}", "[green]● Always available[/]", s["desc"])
         elif s["status"] == "connected":
             trading = s["name"] in ("Hyperliquid", "Aster DEX", "Polymarket")
             label = "[bold green]● Trading enabled[/]" if trading else "[green]● Connected[/]"
             if s["name"] == "TradingView":
                 label = "[green]● Webhook active[/]"
-            ds.add_row(f"{s['icon']} {s['name']}", label, s["desc"])
+            if is_highlight:
+                label = f"[bold green]● Just configured ✓[/]"
+            ds.add_row(f"{s['icon']} {s['name']}{marker}", label, s["desc"])
         else:
-            ds.add_row(f"{s['icon']} {s['name']}", "[dim]○ Not configured[/]", s["desc"])
+            ds.add_row(f"{s['icon']} {s['name']}{marker}", "[dim]○ Not configured[/]", s["desc"])
 
     console.print(ds)
 
@@ -540,6 +564,39 @@ def _start_nats_subscriber():
 
 
 # ════════════════════════════════════════════════════════════════
+# REST API — Auto-start as background thread
+# ════════════════════════════════════════════════════════════════
+
+api_status = {"running": False, "disabled": False, "port": 8000, "tools": 0}
+
+
+def _start_api_server():
+    """Start the REST API server as a daemon thread (same pattern as sentinel.py)."""
+    api_enabled = os.getenv("API_ENABLED", "true").lower() == "true"
+    if not api_enabled:
+        api_status["disabled"] = True
+        return
+
+    try:
+        from api_server import create_app, registry, API_PORT, API_HOST
+        import uvicorn
+
+        app = create_app()
+        api_status["port"] = API_PORT
+        api_status["tools"] = registry.tool_count
+
+        def _run_api():
+            uvicorn.run(app, host=API_HOST, port=API_PORT, log_level="warning")
+
+        api_thread = threading.Thread(target=_run_api, daemon=True)
+        api_thread.start()
+        api_status["running"] = True
+    except Exception as e:
+        logging.getLogger("sentinel").warning(f"REST API failed to start: {e}")
+        api_status["running"] = False
+
+
+# ════════════════════════════════════════════════════════════════
 # ADD COMMAND — Interactive API key configuration
 # ════════════════════════════════════════════════════════════════
 
@@ -552,16 +609,253 @@ _ADD_SERVICES = {
     "twitter":    {"keys": [("X_BEARER_TOKEN", "X (Twitter) Bearer token")], "name": "X (Twitter)", "url": "https://developer.x.com"},
     "hl":         {"keys": [("HYPERLIQUID_WALLET_ADDRESS", "Wallet address"), ("HYPERLIQUID_PRIVATE_KEY", "Private key")], "name": "Hyperliquid", "url": "https://app.hyperliquid.xyz"},
     "hyperliquid":{"keys": [("HYPERLIQUID_WALLET_ADDRESS", "Wallet address"), ("HYPERLIQUID_PRIVATE_KEY", "Private key")], "name": "Hyperliquid", "url": "https://app.hyperliquid.xyz"},
-    "aster":      {"keys": [("ASTER_API_KEY", "Aster API key"), ("ASTER_SECRET_KEY", "Aster secret key")], "name": "Aster DEX", "url": "https://www.asterdex.com"},
+    "aster":      {"keys": [("ASTER_API_KEY", "Aster API key"), ("ASTER_API_SECRET", "Aster secret key")], "name": "Aster DEX", "url": "https://www.asterdex.com"},
     "polymarket": {"keys": [("POLYMARKET_PRIVATE_KEY", "Polymarket private key")], "name": "Polymarket", "url": "https://polymarket.com"},
     "telegram":   {"keys": [("TELEGRAM_BOT_TOKEN", "Bot token (from @BotFather)"), ("TELEGRAM_CHAT_ID", "Chat ID")], "name": "Telegram", "url": "https://t.me/BotFather"},
     "tradingview":{"keys": [("WEBHOOK_SECRET", "Webhook secret (any string)")], "name": "TradingView Webhooks", "url": "https://www.tradingview.com/support/solutions/43000529348"},
     "tv":         {"keys": [("WEBHOOK_SECRET", "Webhook secret (any string)")], "name": "TradingView Webhooks", "url": "https://www.tradingview.com/support/solutions/43000529348"},
+    "api":        {"keys": [("API_KEYS", "API key for REST access (e.g. sk-your-key)")], "name": "REST API Auth", "url": "http://localhost:8000/docs"},
 }
+
+# Track the last configured service for status highlighting
+_last_configured_service = None
+
+
+# ════════════════════════════════════════════════════════════════
+# PER-SERVICE VERIFY FUNCTIONS — lightweight, non-destructive
+# ════════════════════════════════════════════════════════════════
+
+def _verify_fred() -> dict:
+    """Verify FRED API key by fetching a single series."""
+    import requests as _req
+    key = os.getenv("FRED_API_KEY", "").strip()
+    if not key:
+        return {"ok": False, "error": "FRED_API_KEY not set"}
+    try:
+        r = _req.get(
+            "https://api.stlouisfed.org/fred/series",
+            params={"api_key": key, "series_id": "GDP", "file_type": "json"},
+            timeout=10,
+        )
+        if r.status_code == 200:
+            data = r.json()
+            title = data.get("seriess", [{}])[0].get("title", "")
+            return {"ok": True, "detail": f"Fetched series: {title}"}
+        return {"ok": False, "error": f"HTTP {r.status_code}", "hint": "Check your FRED API key"}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
+def _verify_y2() -> dict:
+    """Verify Y2 Intelligence key by listing 1 news item."""
+    try:
+        from y2 import Y2
+    except ImportError:
+        return {"ok": False, "error": "y2-py not installed (run: uv add y2-py)"}
+    key = os.getenv("Y2_API_KEY", "").strip()
+    if not key:
+        return {"ok": False, "error": "Y2_API_KEY not set"}
+    try:
+        client = Y2(api_key=key)
+        news = client.news.list(topics="bitcoin", limit=1)
+        return {"ok": True, "detail": f"Connected — {len(news.data)} item(s) returned"}
+    except Exception as e:
+        return {"ok": False, "error": str(e), "hint": "Check key at y2.dev/app/developers/api-keys"}
+
+
+def _verify_elfa() -> dict:
+    """Verify Elfa AI key by fetching 1 trending token."""
+    import requests as _req
+    key = os.getenv("ELFA_API_KEY", "").strip()
+    if not key:
+        return {"ok": False, "error": "ELFA_API_KEY not set"}
+    try:
+        r = _req.get(
+            "https://api.elfa.ai/v2/aggregations/trending-tokens",
+            headers={"x-elfa-api-key": key, "Accept": "application/json"},
+            params={"timeWindow": "24h", "limit": 1},
+            timeout=10,
+        )
+        if r.status_code == 200:
+            return {"ok": True, "detail": "Trending tokens endpoint OK"}
+        return {"ok": False, "error": f"HTTP {r.status_code}", "hint": "Check your Elfa API key"}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
+def _verify_x() -> dict:
+    """Verify X (Twitter) Bearer token with a small search."""
+    import requests as _req
+    token = os.getenv("X_BEARER_TOKEN", "").strip()
+    if not token:
+        return {"ok": False, "error": "X_BEARER_TOKEN not set"}
+    try:
+        r = _req.get(
+            "https://api.twitter.com/2/tweets/search/recent",
+            headers={"Authorization": f"Bearer {token}"},
+            params={"query": "crypto", "max_results": 10},
+            timeout=10,
+        )
+        if r.status_code == 200:
+            count = len(r.json().get("data", []))
+            return {"ok": True, "detail": f"Search OK — {count} tweet(s) returned"}
+        elif r.status_code == 401:
+            return {"ok": False, "error": "401 Unauthorized", "hint": "Bearer token is invalid or expired"}
+        elif r.status_code == 403:
+            return {"ok": False, "error": "403 Forbidden", "hint": "Token lacks search permissions — check your X app settings"}
+        return {"ok": False, "error": f"HTTP {r.status_code}"}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
+def _verify_hl() -> dict:
+    """Verify Hyperliquid connection using existing get_hl_config."""
+    try:
+        from scrapers.hyperliquid_scraper import get_hl_config
+        config = get_hl_config()
+        conn = config.get("connection", "")
+        if conn == "Connected":
+            value = config.get("account_value", "0")
+            mode = config.get("mode", "Unknown")
+            return {"ok": True, "detail": f"{mode} — account value: ${value}"}
+        elif "Error" in conn:
+            return {"ok": False, "error": conn}
+        elif config.get("wallet_address") == "Not configured":
+            return {"ok": False, "error": "Wallet address not configured"}
+        return {"ok": True, "detail": f"Mode: {config.get('mode', 'Unknown')}"}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
+def _verify_aster() -> dict:
+    """Verify Aster DEX using existing aster_diagnose."""
+    try:
+        from scrapers.aster_scraper import aster_diagnose
+        diag = aster_diagnose()
+        overall = diag.get("overall", "")
+        if "✅" in overall:
+            results = []
+            if "✅" in diag.get("connectivity", ""):
+                results.append("connectivity")
+            if "✅" in diag.get("get_auth", ""):
+                results.append("read access")
+            if "✅" in diag.get("post_auth", ""):
+                results.append("trade access")
+            return {"ok": True, "detail": f"Operational — {', '.join(results)} confirmed"}
+        elif "⚠️" in overall:
+            return {"ok": True, "detail": overall.replace("⚠️ ", ""), "warning": True}
+        else:
+            hint = diag.get("get_auth_hint") or diag.get("post_auth_hint") or diag.get("hint", "")
+            return {"ok": False, "error": overall.replace("❌ ", ""), "hint": hint}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
+def _verify_polymarket() -> dict:
+    """Verify Polymarket — ping Gamma API + test CLOB client if key set."""
+    import requests as _req
+    # Public read — always works if internet is up
+    try:
+        r = _req.get(
+            "https://gamma-api.polymarket.com/markets",
+            params={"limit": 1, "active": "true"},
+            timeout=15,
+        )
+        if r.status_code != 200:
+            return {"ok": False, "error": f"Gamma API returned HTTP {r.status_code}"}
+    except Exception as e:
+        return {"ok": False, "error": f"Cannot reach Polymarket: {e}"}
+
+    # If private key is set, test CLOB client auth
+    pk = os.getenv("POLYMARKET_PRIVATE_KEY", "").strip()
+    if pk:
+        try:
+            from scrapers.polymarket_scraper import _get_clob_client
+            client = _get_clob_client()
+            if client:
+                return {"ok": True, "detail": "Markets API + trading auth OK"}
+            return {"ok": False, "error": "CLOB client init failed", "hint": "Check private key format"}
+        except Exception as e:
+            return {"ok": False, "error": f"CLOB auth error: {e}"}
+
+    return {"ok": True, "detail": "Markets API OK (read-only — no trading key)"}
+
+
+def _verify_telegram() -> dict:
+    """Verify Telegram bot token via getMe API."""
+    import requests as _req
+    token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+    if not token:
+        return {"ok": False, "error": "TELEGRAM_BOT_TOKEN not set"}
+    try:
+        r = _req.get(f"https://api.telegram.org/bot{token}/getMe", timeout=10)
+        if r.status_code == 200:
+            data = r.json()
+            if data.get("ok"):
+                bot_name = data.get("result", {}).get("username", "unknown")
+                return {"ok": True, "detail": f"Bot @{bot_name} authenticated"}
+        return {"ok": False, "error": f"HTTP {r.status_code}", "hint": "Check bot token from @BotFather"}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
+def _verify_tradingview() -> dict:
+    """TradingView webhooks — no remote API to ping, just confirm secret is set."""
+    secret = os.getenv("WEBHOOK_SECRET", "").strip()
+    if secret:
+        port = os.getenv("WEBHOOK_PORT", "8888")
+        return {"ok": True, "detail": f"Webhook secret set — listening on port {port}"}
+    return {"ok": False, "error": "WEBHOOK_SECRET not set"}
+
+
+# Service name → verify function mapping
+_VERIFY_MAP = {
+    "fred": _verify_fred,
+    "y2": _verify_y2,
+    "elfa": _verify_elfa,
+    "x": _verify_x,
+    "twitter": _verify_x,
+    "hl": _verify_hl,
+    "hyperliquid": _verify_hl,
+    "aster": _verify_aster,
+    "polymarket": _verify_polymarket,
+    "telegram": _verify_telegram,
+    "tradingview": _verify_tradingview,
+    "tv": _verify_tradingview,
+}
+
+
+def _verify_service(service: str, service_name: str):
+    """Run verification for a service and print Rich-formatted results."""
+    verify_fn = _VERIFY_MAP.get(service)
+    if not verify_fn:
+        console.print(f"  [dim]No auto-verify available for {service_name}.[/]\n")
+        return
+
+    console.print(f"\n  [bold cyan]🔍 Verifying {service_name}...[/]")
+
+    try:
+        with console.status(f"[cyan]Testing {service_name} connection...[/]"):
+            result = verify_fn()
+    except Exception as e:
+        result = {"ok": False, "error": str(e)}
+
+    if result.get("ok"):
+        if result.get("warning"):
+            console.print(f"  [yellow]⚠️  {result.get('detail', 'Partially working')}[/]")
+        else:
+            console.print(f"  [green]✅ {result.get('detail', 'Connected')}[/]")
+        console.print(f"  [green]✓ {service_name} is live![/]\n")
+    else:
+        console.print(f"  [red]❌ {result.get('error', 'Verification failed')}[/]")
+        if result.get("hint"):
+            console.print(f"  [yellow]💡 Hint: {result['hint']}[/]")
+        console.print(f"  [yellow]⚠ Keys saved but verification failed. Double-check credentials.[/]\n")
 
 
 def _handle_add(service: str):
     """Interactively configure an API key for a data source."""
+    global _last_configured_service
     service = service.lower().strip()
 
     if not service or service == "list":
@@ -613,7 +907,8 @@ def _handle_add(service: str):
     load_dotenv(override=True)
 
     if all_saved:
-        console.print(f"\n  [green]✓ {svc['name']} configured![/] Type 'status' to verify.\n")
+        _last_configured_service = service
+        _verify_service(service, svc["name"])
     else:
         console.print(f"\n  [yellow]Partially configured.[/] Type 'add {service}' to finish.\n")
 
@@ -907,6 +1202,12 @@ def main():
     except Exception as e:
         console.print(f"  [yellow]⚠ NATS connection failed: {e}[/]")
         console.print(f"  [dim]Run 'docker compose up -d nats' first.[/]\n")
+
+    # Start REST API server in background
+    try:
+        _start_api_server()
+    except Exception as e:
+        console.print(f"  [yellow]⚠ REST API failed: {e}[/]")
 
     # Show status
     _print_status(
