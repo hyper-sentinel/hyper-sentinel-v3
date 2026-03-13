@@ -1722,7 +1722,7 @@ wheels = [
 ]
 
 [[package]]
-name = "hyper-sentinel-v3"
+name = "hyper-sentinel"
 version = "0.3.0"
 source = { virtual = "." }
 dependencies = [

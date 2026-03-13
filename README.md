@@ -60,23 +60,27 @@ Download [Docker Desktop](https://www.docker.com/products/docker-desktop/) or:
 brew install --cask docker
 ```
 
-### Step 3 · Run it
+### Step 3 · Clone & run
 
 ```bash
 git clone https://github.com/hyper-sentinel/hyper-sentinel.git
 cd hyper-sentinel
-docker compose up -d nats
-uv run main.py
 ```
 
-**That's it.** One command boots everything:
+### Step 4 · One command
+
+```bash
+docker compose up -d nats && uv run main.py
+```
+
+**That's it.** One line boots everything:
 - 🖥️ **Interactive REPL** — chat with the AI agent
 - 🌐 **REST API** — auto-starts on `http://localhost:8000/docs` (49 tools)
 - 📡 **NATS messaging** — pub/sub event fabric
 
 On first run, the interactive setup walks you through configuration — paste any supported AI provider key and you're live. All keys are auto-saved to `.env`.
 
-### Step 4 · Go autonomous
+### Step 5 · Go autonomous
 
 Once the REPL is running, type `sentinel` to start the 24/7 monitoring loop:
 
